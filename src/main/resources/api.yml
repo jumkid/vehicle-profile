@@ -1,0 +1,76 @@
+openapi: 3.1.0
+info:
+  version: v1
+  title: vehicle-profile API
+  description: vehicle-profile RESTFul api for openapi 3.1
+  termsOfService: 'https://jumkid.com/terms-of-use'
+  contact:
+    name: support
+    url: jumkid.com
+    email: support@jumkid.com
+  license:
+    name: Jumkid Public License
+    url: 'http://license.jumkid.com'
+
+servers:
+  - description: Testing
+    url: 'http://test.jumkid.com'
+  - description: Live production
+    url: 'http://api.jumkid.com'
+
+tags:
+  - name: v1
+    description: API for version 0.9.1
+  - name: test
+    description: API for test
+
+paths:
+  '/vehicle':
+    get:
+      tags: [ 'v1' ]
+      operationId: getVehicles
+      description: get all vehicles by user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+
+    post:
+      tags: [ 'v1' ]
+      operationId: addVehicle
+      description: add new activity for user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+
+components:
+  schemas:
+    Vehicle:
+      description: Model of vehicle
+      properties:
+        vehicleId:
+          type: string
+        name:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        modelYear:
+          type: integer
+        userId:
+          type: string
