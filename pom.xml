@@ -21,7 +21,7 @@
         <org.projectlombok.version>1.18.22</org.projectlombok.version>
         <junit.version>4.13.2</junit.version>
         <jaxb.version>2.3.0</jaxb.version>
-        <flyway.version>6.3.3</flyway.version>
+        <flyway.version>8.5.2</flyway.version>
         <mysql.driver.version>8.0.17</mysql.driver.version>
         <h2.db.version>2.1.210</h2.db.version>
 

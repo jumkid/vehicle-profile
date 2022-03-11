@@ -3,6 +3,7 @@ package com.jumkid.vehicle.service;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
+import com.jumkid.vehicle.exception.VehicleDataOutdatedException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
@@ -14,7 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -58,11 +64,59 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
+    @Transactional
+    public Vehicle saveUserVehicle(String vehicleId, Vehicle vehicle) {
+        VehicleMasterEntity oldEntity = vehicleMasterRepository.getById(vehicleId);
+
+        normalizeDTO(vehicleId, vehicle, oldEntity);
+
+        VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
+
+        entity = vehicleMasterRepository.save(entity);
+        log.debug("updated user vehicle master data");
+
+        return vehicleMapper.entityToDto(entity);
+    }
+
+    @Override
     public void deleteUserVehicle(String vehicleId) {
         VehicleMasterEntity existingEntity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> new VehicleNotFoundException(vehicleId));
         vehicleMasterRepository.delete(existingEntity);
         log.debug("Vehicle with id {} is removed.", vehicleId);
+    }
+
+    @Override
+    public Integer importVehicleMaster(InputStream is) throws IOException {
+        log.info("importing vehicle master data");
+
+        final String COMMA_DELIMITER = ",";
+        List<VehicleMasterEntity> vehicleMasterEntityList = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            while (reader.ready()) {
+                String line = reader.readLine();
+                if (line.isBlank()) continue;
+
+                String[] domainStr = line.split(COMMA_DELIMITER);
+                Vehicle newVehicle = Vehicle.builder()
+                            .name(domainStr[0].trim())
+                            .make(domainStr[1].trim())
+                            .model(domainStr[2].trim())
+                            .modelYear(Integer.parseInt(domainStr[3].trim()))
+                            .build();
+                normalizeDTO(newVehicle);
+                vehicleMasterEntityList.add(vehicleMapper.dtoToEntity(newVehicle));
+            }
+
+            if (!vehicleMasterEntityList.isEmpty()) {
+                vehicleMasterEntityList = vehicleMasterRepository.saveAll(vehicleMasterEntityList);
+            }
+            log.info("{} records are imported", vehicleMasterEntityList.size());
+            return vehicleMasterEntityList.size();
+        } catch (IOException e) {
+            log.error("Unable to extra data from the import file {}", e.getMessage());
+        }
+        return 0;
     }
 
     private UserProfile getUserProfile() {
@@ -74,22 +128,28 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         }
     }
 
+    private void normalizeDTO(Vehicle dto) { normalizeDTO(null, dto, null);}
+
     private void normalizeDTO(String vehicleId, Vehicle dto, VehicleMasterEntity oldEntity) {
-        if (vehicleId != null) dto.setId(vehicleId);
+        dto.setId(vehicleId);
 
         LocalDateTime now = LocalDateTime.now();
         UserProfile userProfile = userProfileManager.fetchUserProfile();
         String userId = userProfile != null ? userProfile.getId() : null;
 
-        dto.setModifiedBy(userId);
-        dto.setModificationDate(now);
-
         if (oldEntity != null) {
             dto.setCreatedBy(oldEntity.getCreatedBy());
             dto.setCreationDate(oldEntity.getCreationDate());
+
+            if (!oldEntity.getModificationDate().equals(dto.getModificationDate())) {
+                throw new VehicleDataOutdatedException();
+            }
         } else {
-            dto.setCreatedBy(userId);
             dto.setCreationDate(now);
+            dto.setCreatedBy(userId);
         }
+
+        dto.setModifiedBy(userId);
+        dto.setModificationDate(now);
     }
 }

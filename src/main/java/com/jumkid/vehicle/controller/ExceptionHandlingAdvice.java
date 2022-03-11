@@ -2,6 +2,7 @@ package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.CustomErrorResponse;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
+import com.jumkid.vehicle.exception.VehicleDataOutdatedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,5 +35,12 @@ public class ExceptionHandlingAdvice {
                 .property(ex.getFieldErrors().stream().map(FieldError::getField).collect(Collectors.toList()))
                 .details(ex.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList()))
                 .build();
+    }
+
+    @ExceptionHandler(VehicleDataOutdatedException.class)
+    @ResponseStatus(CONFLICT)
+    public CustomErrorResponse handleMethodArgumentNotValidException(VehicleDataOutdatedException ex) {
+        log.warn("The target vehicle data has been updated.", ex);
+        return new CustomErrorResponse(Calendar.getInstance().getTime(), ex.getMessage());
     }
 }
