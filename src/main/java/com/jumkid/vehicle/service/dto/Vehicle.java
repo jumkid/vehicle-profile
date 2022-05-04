@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -30,13 +31,17 @@ public class Vehicle extends GenericDTO {
     @Min(1800)
     private Integer modelYear;
 
+    @Valid
+    private VehicleEngine vehicleEngine;
+
     /**
      * This constructor is for lombok builder only since it is subclass of generic DTO
      *
      */
     @Builder
     public Vehicle(String id, String name, String make, String model, Integer modelYear,
-            String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modificationDate) {
+                   String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modificationDate,
+                   VehicleEngine vehicleEngine) {
 
         super(createdBy, creationDate, modifiedBy, modificationDate);
 
@@ -45,6 +50,7 @@ public class Vehicle extends GenericDTO {
         this.make = make;
         this.model = model;
         this.modelYear = modelYear;
+        this.vehicleEngine = vehicleEngine;
     }
 
 }

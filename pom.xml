@@ -21,9 +21,12 @@
         <org.projectlombok.version>1.18.22</org.projectlombok.version>
         <junit.version>4.13.2</junit.version>
         <jaxb.version>2.3.0</jaxb.version>
-        <flyway.version>8.5.2</flyway.version>
-        <mysql.driver.version>8.0.17</mysql.driver.version>
+        <jakarta.json.version>2.1.0</jakarta.json.version>
+
+        <flyway.version>8.1.0</flyway.version>
+        <mysql.driver.version>8.0.28</mysql.driver.version>
         <h2.db.version>2.1.210</h2.db.version>
+        <elasticsearch.version>8.1.0</elasticsearch.version>
 
         <!-- jumkid modules -->
         <sharejar.version>1.0.1</sharejar.version>
@@ -90,6 +93,12 @@
             <version>${jaxb.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>${jakarta.json.version}</version>
+        </dependency>
+
         <!-- DB -->
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -105,6 +114,12 @@
             <scope>runtime</scope>
         </dependency>
         <!-- DB END -->
+
+        <dependency>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
 
         <!-- TEST -->
         <dependency>

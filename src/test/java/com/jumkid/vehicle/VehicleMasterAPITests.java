@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
+import com.jumkid.vehicle.service.mapper.VehicleEngineMapper;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,9 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
+@SpringBootTest(properties = { "jwt.token.enable = false" })
 @AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:application.properties")
 public class VehicleMasterAPITests {
 
     @Autowired
@@ -39,7 +39,8 @@ public class VehicleMasterAPITests {
 
     private Vehicle vehicle;
 
-    private final VehicleMapper vehicleMapper = Mappers.getMapper( VehicleMapper.class );
+    @Autowired
+    private VehicleMapper vehicleMapper;
 
     @MockBean
     private VehicleMasterRepository vehicleRepository;
@@ -48,9 +49,8 @@ public class VehicleMasterAPITests {
     public void setup() {
         try {
             vehicle = APITestsSetup.buildVehicle();
-
-            when(vehicleRepository.save(any(VehicleMasterEntity.class)))
-                    .thenReturn(vehicleMapper.dtoToEntity(vehicle));
+            VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
+            when(vehicleRepository.save(any(VehicleMasterEntity.class))).thenReturn(entity);
 
             when(vehicleRepository.findById(vehicle.getId())).thenReturn(Optional.of(vehicleMapper.dtoToEntity(vehicle)));
         } catch (Exception e) {

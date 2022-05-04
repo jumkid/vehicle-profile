@@ -1,0 +1,44 @@
+{
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text"
+      },
+      "make": {
+        "type": "keyword"
+      },
+      "model": {
+        "type": "keyword"
+      },
+      "modelYear": {
+        "type": "integer",
+        "index": false
+      },
+      "engine": {
+        "properties": {
+          "name": {
+            "type": "text"
+          },
+          "type": {
+            "type": "keyword"
+          },
+          "cylinder": {
+            "type": "integer"
+          },
+          "fuelType": {
+            "type": "keyword"
+          },
+          "horsepower": {
+            "type": "integer"
+          },
+          "torque": {
+            "type": "integer"
+          },
+          "manufacturerEngineCode": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}

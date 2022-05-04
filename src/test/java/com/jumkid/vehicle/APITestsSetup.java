@@ -1,6 +1,7 @@
 package com.jumkid.vehicle;
 
 import com.jumkid.vehicle.service.dto.Vehicle;
+import com.jumkid.vehicle.service.dto.VehicleEngine;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,17 @@ public class APITestsSetup {
                 .make("toyota")
                 .model("highlander")
                 .modelYear(2022)
+                .vehicleEngine(VehicleEngine.builder()
+                                .vehicleId(DUMMY_ID)
+                                .name("test vehicle engine")
+                                .type("V-Engine")
+                                .cylinder(4)
+                                .fuelType("diesel")
+                                .horsepower(180)
+                                .torque(140)
+                                .manufacturerEngineCode("ABC")
+                                .build()
+                )
                 .build();
     }
 }

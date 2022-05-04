@@ -6,6 +6,8 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import com.jumkid.vehicle.enums.VehicleTables;
+
 @Entity
 @Table(name = "vehicle_master")
 @Getter
@@ -18,31 +20,35 @@ public class VehicleMasterEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "vehicle_id", updatable = false, nullable = false)
+    @Column(name = VehicleTables.Fields.VEHICLE_ID, updatable = false, nullable = false)
     private String vehicleId;
 
-    @Column(name = "name")
+    @Column(name = VehicleTables.Fields.NAME)
     private String name;
 
-    @Column(name = "make")
+    @Column(name = VehicleTables.Fields.MAKE)
     private String make;
 
-    @Column(name = "model")
+    @Column(name = VehicleTables.Fields.MODEL)
     private String model;
 
-    @Column(name = "model_year")
+    @Column(name = VehicleTables.Fields.MODEL_YEAR)
     private Integer modelYear;
 
-    @Column(name = "creation_date")
+    @Column(name = VehicleTables.Fields.CREATION_DATE)
     private LocalDateTime creationDate;
 
-    @Column(name = "created_by")
+    @Column(name = VehicleTables.Fields.CREATED_BY)
     private String createdBy;
 
-    @Column(name = "modification_date")
+    @Column(name = VehicleTables.Fields.MODIFICATION_DATE)
     private LocalDateTime modificationDate;
 
-    @Column(name = "modified_by")
+    @Column(name = VehicleTables.Fields.MODIFIED_BY)
     private String modifiedBy;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = VehicleTables.Fields.VEHICLE_ID)
+    private VehicleEngineEntity vehicleEngineEntity;
 
 }

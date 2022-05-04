@@ -6,11 +6,13 @@ import com.jumkid.share.user.UserProfileManager;
 import com.jumkid.vehicle.exception.VehicleDataOutdatedException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
+import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
+import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
+import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +31,23 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     private final VehicleMasterRepository vehicleMasterRepository;
 
+    private final VehicleSearchRepository vehicleSearchRepository;
+
     private final UserProfileManager userProfileManager;
 
-    private final VehicleMapper vehicleMapper = Mappers.getMapper(VehicleMapper.class);
+    private final VehicleMapper vehicleMapper;
+    private final VehicleSearchMapper vehicleSearchMapper;
 
     @Autowired
-    public VehicleMasterServiceImpl(VehicleMasterRepository vehicleMasterRepository, UserProfileManager userProfileManager) {
+    public VehicleMasterServiceImpl(VehicleMasterRepository vehicleMasterRepository,
+                                    VehicleSearchRepository vehicleSearchRepository,
+                                    UserProfileManager userProfileManager,
+                                    VehicleMapper vehicleMapper, VehicleSearchMapper vehicleSearchMapper) {
         this.vehicleMasterRepository = vehicleMasterRepository;
+        this.vehicleSearchRepository = vehicleSearchRepository;
         this.userProfileManager = userProfileManager;
+        this.vehicleMapper = vehicleMapper;
+        this.vehicleSearchMapper = vehicleSearchMapper;
     }
 
     @Override
@@ -56,9 +67,12 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         normalizeDTO(null, vehicle, null);
 
         VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
+        entity.getVehicleEngineEntity().setVehicleMasterEntity(entity);
 
         entity = vehicleMasterRepository.save(entity);
-        log.debug("new user vehicle saved");
+        log.debug("new user vehicle data saved");
+
+        vehicleSearchRepository.save(vehicleSearchMapper.entityToSearchMeta(entity));
 
         return vehicleMapper.entityToDto(entity);
     }
@@ -71,6 +85,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         normalizeDTO(vehicleId, vehicle, oldEntity);
 
         VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
+        entity.getVehicleEngineEntity().setVehicleMasterEntity(entity);
 
         entity = vehicleMasterRepository.save(entity);
         log.debug("updated user vehicle master data");
@@ -79,11 +94,20 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
+    @Transactional
     public void deleteUserVehicle(String vehicleId) {
         VehicleMasterEntity existingEntity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> new VehicleNotFoundException(vehicleId));
-        vehicleMasterRepository.delete(existingEntity);
-        log.debug("Vehicle with id {} is removed.", vehicleId);
+        try {
+            vehicleMasterRepository.delete(existingEntity);
+            log.debug("Vehicle with id {} is removed.", vehicleId);
+
+            vehicleSearchRepository.delete(vehicleId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("failed to delete user vehicle by id {}", vehicleId);
+        }
+
     }
 
     @Override
