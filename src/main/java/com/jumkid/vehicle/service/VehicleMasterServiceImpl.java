@@ -10,7 +10,6 @@ import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
-import com.jumkid.vehicle.service.mapper.VehicleEngineMapper;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -38,20 +37,17 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     private final UserProfileManager userProfileManager;
 
     private final VehicleMapper vehicleMapper;
-    private final VehicleEngineMapper vehicleEngineMapper;
     private final VehicleSearchMapper vehicleSearchMapper;
 
     @Autowired
     public VehicleMasterServiceImpl(VehicleMasterRepository vehicleMasterRepository,
                                     VehicleSearchRepository vehicleSearchRepository,
                                     UserProfileManager userProfileManager,
-                                    VehicleMapper vehicleMapper,
-                                    VehicleEngineMapper vehicleEngineMapper, VehicleSearchMapper vehicleSearchMapper) {
+                                    VehicleMapper vehicleMapper, VehicleSearchMapper vehicleSearchMapper) {
         this.vehicleMasterRepository = vehicleMasterRepository;
         this.vehicleSearchRepository = vehicleSearchRepository;
         this.userProfileManager = userProfileManager;
         this.vehicleMapper = vehicleMapper;
-        this.vehicleEngineMapper = vehicleEngineMapper;
         this.vehicleSearchMapper = vehicleSearchMapper;
     }
 
@@ -96,7 +92,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
         normalizeDTO(vehicleId, vehicle, updateEntity);
 
-        vehicleMapper.updateMasterEntityFromDto(vehicle, updateEntity);
+        vehicleMapper.updateEntityFromDto(vehicle, updateEntity);
 
         updateEntity = vehicleMasterRepository.save(updateEntity);
         log.debug("updated user vehicle master data");

@@ -23,6 +23,8 @@ public class VehicleSearch implements Serializable {
 
     private Integer modelYear;
 
-    private VehicleEngineSearch vehicleEngineSearch;
+    private VehicleEngineSearch vehicleEngine;
+
+    private VehicleTransmissionSearch vehicleTransmission;
 
 }

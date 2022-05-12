@@ -38,6 +38,23 @@
             "type": "keyword"
           }
         }
+      },
+      "transmission": {
+        "name": {
+          "type": "text"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "automaticType": {
+          "type": "keyword"
+        },
+        "availability": {
+          "type": "keyword"
+        },
+        "numberOfSpeeds": {
+          "type": "integer"
+        }
       }
     }
   }

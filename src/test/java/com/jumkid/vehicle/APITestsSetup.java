@@ -2,6 +2,7 @@ package com.jumkid.vehicle;
 
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.dto.VehicleEngine;
+import com.jumkid.vehicle.service.dto.VehicleTransmission;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +28,14 @@ public class APITestsSetup {
                                 .torque(140)
                                 .manufacturerEngineCode("ABC")
                                 .build()
+                )
+                .vehicleTransmission(VehicleTransmission.builder()
+                        .name("test vehicle transmission")
+                        .type("automatic")
+                        .automaticType("AMT")
+                        .availability("standard")
+                        .numberOfSpeeds(6)
+                        .build()
                 )
                 .build();
     }

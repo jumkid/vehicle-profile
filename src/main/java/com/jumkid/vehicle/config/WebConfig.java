@@ -1,6 +1,5 @@
 package com.jumkid.vehicle.config;
 
-import com.jumkid.vehicle.enums.VehicleEngineField;
 import com.jumkid.vehicle.enums.VehicleField;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -22,10 +21,4 @@ public class WebConfig implements WebMvcConfigurer {
         }
     }
 
-    private static class StringToVehicleEngineFieldConverter implements Converter<String, VehicleEngineField> {
-        @Override
-        public VehicleEngineField convert(String source) {
-            return VehicleEngineField.valueOf(source.toUpperCase());
-        }
-    }
 }

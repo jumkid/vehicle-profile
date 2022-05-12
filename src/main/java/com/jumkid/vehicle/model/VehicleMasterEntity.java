@@ -1,6 +1,7 @@
 package com.jumkid.vehicle.model;
 
 import com.jumkid.vehicle.enums.VehicleEngineField;
+import com.jumkid.vehicle.enums.VehicleTransmissionField;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -53,4 +54,8 @@ public class VehicleMasterEntity {
             referencedColumnName = VehicleEngineField.Fields.ID)
     private VehicleEngineEntity vehicleEngineEntity;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = VehicleField.Fields.VEHICLE_TRANSMISSION_ID,
+            referencedColumnName = VehicleTransmissionField.Fields.ID)
+    private VehicleTransmissionEntity vehicleTransmissionEntity;
 }

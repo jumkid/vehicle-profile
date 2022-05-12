@@ -1,7 +1,6 @@
 package com.jumkid.vehicle.model;
 
 import com.jumkid.vehicle.enums.VehicleEngineField;
-import com.jumkid.vehicle.enums.VehicleField;
 import lombok.*;
 
 import javax.persistence.*;

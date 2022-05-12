@@ -15,7 +15,6 @@ public class VehicleEngine {
 
     private Long vehicleEngineId;
 
-    @NotNull
     private String name;
 
     private String type;

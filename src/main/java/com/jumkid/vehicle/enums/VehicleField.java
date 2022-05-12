@@ -7,7 +7,9 @@ import lombok.experimental.FieldNameConstants;
 public enum VehicleField {
 
     @FieldNameConstants.Include VEHICLE_ID("vehicle_id"),
+
     @FieldNameConstants.Include VEHICLE_ENGINE_ID("vehicle_engine_id"),
+    @FieldNameConstants.Include VEHICLE_TRANSMISSION_ID("vehicle_transmission_id"),
 
     @FieldNameConstants.Include NAME("name"),
     @FieldNameConstants.Include MAKE("make"),

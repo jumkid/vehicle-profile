@@ -1,12 +1,21 @@
 CREATE TABLE vehicle_engine (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
     type VARCHAR(100),
     cylinder SMALLINT,
     fuel_type VARCHAR(100),
     horsepower SMALLINT,
     torque SMALLINT,
     manufacturer_engine_code VARCHAR(100)
+);
+
+CREATE TABLE vehicle_transmission (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    availability VARCHAR(100),
+    automatic_type VARCHAR(100),
+    type VARCHAR(100),
+    number_of_speeds SMALLINT
 );
 
 CREATE TABLE vehicle_master (
@@ -17,6 +26,7 @@ CREATE TABLE vehicle_master (
     model_year INTEGER,
 
     vehicle_engine_id INTEGER,
+    vehicle_transmission_id INTEGER,
 
     created_by VARCHAR(255),
     creation_date DATETIME,

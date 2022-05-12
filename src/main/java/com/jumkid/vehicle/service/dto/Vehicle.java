@@ -34,6 +34,9 @@ public class Vehicle extends GenericDTO {
     @Valid
     private VehicleEngine vehicleEngine;
 
+    @Valid
+    private VehicleTransmission vehicleTransmission;
+
     /**
      * This constructor is for lombok builder only since it is subclass of generic DTO
      *
@@ -41,7 +44,7 @@ public class Vehicle extends GenericDTO {
     @Builder
     public Vehicle(String id, String name, String make, String model, Integer modelYear,
                    String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modificationDate,
-                   VehicleEngine vehicleEngine) {
+                   VehicleEngine vehicleEngine, VehicleTransmission vehicleTransmission) {
 
         super(createdBy, creationDate, modifiedBy, modificationDate);
 
@@ -51,6 +54,7 @@ public class Vehicle extends GenericDTO {
         this.model = model;
         this.modelYear = modelYear;
         this.vehicleEngine = vehicleEngine;
+        this.vehicleTransmission = vehicleTransmission;
     }
 
 }

@@ -11,11 +11,13 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel="spring")
 public interface VehicleSearchMapper {
 
-    @Mapping(target="vehicleEngineSearch", source="entity.vehicleEngineEntity")
+    @Mapping(target="vehicleEngine", source="entity.vehicleEngineEntity")
+    @Mapping(target="vehicleTransmission", source="entity.vehicleTransmissionEntity")
     @Mapping(target="id", source = "entity.vehicleId")
     VehicleSearch entityToSearchMeta(VehicleMasterEntity entity);
 
-    @Mapping(target="vehicleEngineSearch", source="dto.vehicleEngine")
+    @Mapping(target="vehicleEngine", source="dto.vehicleEngine")
+    @Mapping(target="vehicleTransmission", source="dto.vehicleTransmission")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     VehicleSearch dtoToSearch(Vehicle dto);
 }
