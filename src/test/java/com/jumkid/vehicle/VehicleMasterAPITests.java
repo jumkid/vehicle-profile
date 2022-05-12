@@ -110,6 +110,8 @@ public class VehicleMasterAPITests {
         VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
         entity.setMake(updateVehicle.getMake());
 
+        when(vehicleMasterRepository.findById(vehicle.getId()))
+                .thenReturn(Optional.of(entity));
         when(vehicleMasterRepository.save(any(VehicleMasterEntity.class))).thenReturn(entity);
 
         mockMvc.perform(post("/vehicle/" + vehicle.getId())

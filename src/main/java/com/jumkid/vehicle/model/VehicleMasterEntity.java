@@ -2,8 +2,6 @@ package com.jumkid.vehicle.model;
 
 import com.jumkid.vehicle.enums.VehicleEngineField;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
