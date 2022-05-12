@@ -3,13 +3,14 @@ package com.jumkid.vehicle.service;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
+import com.jumkid.vehicle.exception.ModificationDatetimeNotFoundException;
 import com.jumkid.vehicle.exception.VehicleDataOutdatedException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
-import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
+import com.jumkid.vehicle.service.mapper.VehicleEngineMapper;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,17 +38,20 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     private final UserProfileManager userProfileManager;
 
     private final VehicleMapper vehicleMapper;
+    private final VehicleEngineMapper vehicleEngineMapper;
     private final VehicleSearchMapper vehicleSearchMapper;
 
     @Autowired
     public VehicleMasterServiceImpl(VehicleMasterRepository vehicleMasterRepository,
                                     VehicleSearchRepository vehicleSearchRepository,
                                     UserProfileManager userProfileManager,
-                                    VehicleMapper vehicleMapper, VehicleSearchMapper vehicleSearchMapper) {
+                                    VehicleMapper vehicleMapper,
+                                    VehicleEngineMapper vehicleEngineMapper, VehicleSearchMapper vehicleSearchMapper) {
         this.vehicleMasterRepository = vehicleMasterRepository;
         this.vehicleSearchRepository = vehicleSearchRepository;
         this.userProfileManager = userProfileManager;
         this.vehicleMapper = vehicleMapper;
+        this.vehicleEngineMapper = vehicleEngineMapper;
         this.vehicleSearchMapper = vehicleSearchMapper;
     }
 
@@ -62,12 +67,18 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
+    public Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException {
+        VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
+                .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
+        return vehicleMapper.entityToDto(entity);
+    }
+
+    @Override
     @Transactional
     public Vehicle saveUserVehicle(Vehicle vehicle) throws UserProfileNotFoundException{
         normalizeDTO(null, vehicle, null);
 
         VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
-        entity.getVehicleEngineEntity().setVehicleMasterEntity(entity);
 
         entity = vehicleMasterRepository.save(entity);
         log.debug("new user vehicle data saved");
@@ -79,25 +90,28 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     @Override
     @Transactional
-    public Vehicle saveUserVehicle(String vehicleId, Vehicle vehicle) {
-        VehicleMasterEntity oldEntity = vehicleMasterRepository.getById(vehicleId);
+    public Vehicle updateUserVehicle(String vehicleId, Vehicle vehicle) {
+        VehicleMasterEntity updateEntity = vehicleMasterRepository.findById(vehicleId)
+                .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
 
-        normalizeDTO(vehicleId, vehicle, oldEntity);
+        normalizeDTO(vehicleId, vehicle, updateEntity);
 
-        VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
-        entity.getVehicleEngineEntity().setVehicleMasterEntity(entity);
+        vehicleMapper.updateMasterEntityFromDto(vehicle, updateEntity);
 
-        entity = vehicleMasterRepository.save(entity);
+        updateEntity = vehicleMasterRepository.save(updateEntity);
         log.debug("updated user vehicle master data");
 
-        return vehicleMapper.entityToDto(entity);
+        vehicleSearchRepository.update(vehicleId, vehicleSearchMapper.dtoToSearch(vehicle));
+        log.debug("updated user vehicle search indexer");
+
+        return vehicleMapper.entityToDto(updateEntity);
     }
 
     @Override
     @Transactional
     public void deleteUserVehicle(String vehicleId) {
-        VehicleMasterEntity existingEntity = vehicleMasterRepository.findById(vehicleId)
-                .orElseThrow(() -> new VehicleNotFoundException(vehicleId));
+        VehicleMasterEntity existingEntity = vehicleMasterRepository.getById(vehicleId);
+
         try {
             vehicleMasterRepository.delete(existingEntity);
             log.debug("Vehicle with id {} is removed.", vehicleId);
@@ -165,7 +179,9 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
             dto.setCreatedBy(oldEntity.getCreatedBy());
             dto.setCreationDate(oldEntity.getCreationDate());
 
-            if (!oldEntity.getModificationDate().equals(dto.getModificationDate())) {
+            if (dto.getModificationDate() == null) { throw new ModificationDatetimeNotFoundException(); }
+
+            if (!oldEntity.getModificationDate().truncatedTo(ChronoUnit.MILLIS).equals(dto.getModificationDate())) {
                 throw new VehicleDataOutdatedException();
             }
         } else {
@@ -176,4 +192,5 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         dto.setModifiedBy(userId);
         dto.setModificationDate(now);
     }
+
 }

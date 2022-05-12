@@ -2,6 +2,7 @@ package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.CustomErrorResponse;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
+import com.jumkid.vehicle.exception.ModificationDatetimeNotFoundException;
 import com.jumkid.vehicle.exception.VehicleDataOutdatedException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +46,9 @@ public class ExceptionHandlingAdvice {
         return new CustomErrorResponse(Calendar.getInstance().getTime(), ex.getMessage());
     }
 
-    @ExceptionHandler(VehicleNotFoundException.class)
+    @ExceptionHandler({VehicleNotFoundException.class, ModificationDatetimeNotFoundException.class})
     @ResponseStatus(NOT_FOUND)
-    public CustomErrorResponse handleVehicleNotFoundException(VehicleNotFoundException ex){
+    public CustomErrorResponse handleNotFoundException(RuntimeException ex){
         return new CustomErrorResponse(Calendar.getInstance().getTime(), ex.getMessage());
     }
 }

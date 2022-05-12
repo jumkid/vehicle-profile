@@ -6,6 +6,8 @@ public interface VehicleSearchRepository {
 
     VehicleSearch save(VehicleSearch vehicleSearch);
 
-    void delete(String docId);
+    VehicleSearch update(String vehicleId, VehicleSearch partialVehicleSearch);
+
+    void delete(String vehicleId);
 
 }

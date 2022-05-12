@@ -9,13 +9,11 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-@EqualsAndHashCode(of = {"vehicleId"}, callSuper = false)
+@EqualsAndHashCode(of = {"vehicleEngineId"}, callSuper = false)
 @Builder
 public class VehicleEngine {
 
     private Long vehicleEngineId;
-
-    private String vehicleId;
 
     @NotNull
     private String name;

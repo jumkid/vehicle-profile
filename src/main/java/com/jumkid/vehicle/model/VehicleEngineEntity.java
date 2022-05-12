@@ -1,6 +1,7 @@
 package com.jumkid.vehicle.model;
 
-import com.jumkid.vehicle.enums.VehicleTables;
+import com.jumkid.vehicle.enums.VehicleEngineField;
+import com.jumkid.vehicle.enums.VehicleField;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,31 +17,27 @@ public class VehicleEngineEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = VehicleTables.Fields.VEHICLE_ENGINE_ID)
+    @Column(name = VehicleEngineField.Fields.ID)
     private String id;
 
-    @Column(name = VehicleTables.Fields.NAME)
+    @Column(name = VehicleEngineField.Fields.NAME)
     private String name;
 
-    @Column(name = VehicleTables.Fields.TYPE)
+    @Column(name = VehicleEngineField.Fields.TYPE)
     private String type;
 
-    @Column(name = VehicleTables.Fields.CYLINDER)
+    @Column(name = VehicleEngineField.Fields.CYLINDER)
     private Integer cylinder;
 
-    @Column(name = VehicleTables.Fields.FUEL_TYPE)
+    @Column(name = VehicleEngineField.Fields.FUEL_TYPE)
     private String fuelType;
 
-    @Column(name = VehicleTables.Fields.HORSEPOWER)
+    @Column(name = VehicleEngineField.Fields.HORSEPOWER)
     private Integer horsepower;
 
-    @Column(name = VehicleTables.Fields.TORQUE)
+    @Column(name = VehicleEngineField.Fields.TORQUE)
     private Integer torque;
 
-    @Column(name = VehicleTables.Fields.MANUFACTURER_ENGINE_CODE)
+    @Column(name = VehicleEngineField.Fields.MANUFACTURER_ENGINE_CODE)
     private String manufacturerEngineCode;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = VehicleTables.Fields.VEHICLE_ID)
-    private VehicleMasterEntity vehicleMasterEntity;
 }

@@ -2,21 +2,21 @@ package com.jumkid.vehicle;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
+import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
+import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
-import com.jumkid.vehicle.service.mapper.VehicleEngineMapper;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
+import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -41,18 +41,29 @@ public class VehicleMasterAPITests {
 
     @Autowired
     private VehicleMapper vehicleMapper;
+    @Autowired
+    private VehicleSearchMapper vehicleSearchMapper;
 
     @MockBean
-    private VehicleMasterRepository vehicleRepository;
+    private VehicleMasterRepository vehicleMasterRepository;
+
+    @MockBean
+    private VehicleSearchRepository vehicleSearchRepository;
 
     @Before
     public void setup() {
         try {
             vehicle = APITestsSetup.buildVehicle();
             VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
-            when(vehicleRepository.save(any(VehicleMasterEntity.class))).thenReturn(entity);
 
-            when(vehicleRepository.findById(vehicle.getId())).thenReturn(Optional.of(vehicleMapper.dtoToEntity(vehicle)));
+            when(vehicleMasterRepository.save(any(VehicleMasterEntity.class))).thenReturn(entity);
+
+            when(vehicleSearchRepository.save(any(VehicleSearch.class)))
+                    .thenReturn(vehicleSearchMapper.entityToSearchMeta(entity));
+
+            when(vehicleMasterRepository.getById(vehicle.getId()))
+                    .thenReturn(vehicleMapper.dtoToEntity(vehicle));
+
         } catch (Exception e) {
             Assert.fail();
         }
@@ -91,13 +102,23 @@ public class VehicleMasterAPITests {
 
     @Test
     public void whenGivenVehicleWithId_shouldUpdateVehicleEntity() throws Exception{
+        Vehicle updateVehicle = Vehicle.builder()
+                .id(vehicle.getId())
+                .make("honda")
+                .modificationDate(vehicle.getModificationDate())
+                .build();
+        VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
+        entity.setMake(updateVehicle.getMake());
+
+        when(vehicleMasterRepository.save(any(VehicleMasterEntity.class))).thenReturn(entity);
+
         mockMvc.perform(post("/vehicle/" + vehicle.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsBytes(vehicle)))
+                .content(new ObjectMapper().writeValueAsBytes(updateVehicle)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(vehicle.getId()))
                 .andExpect(jsonPath("$.name").value(vehicle.getName()))
-                .andExpect(jsonPath("$.make").value(vehicle.getMake()))
+                .andExpect(jsonPath("$.make").value(updateVehicle.getMake()))
                 .andExpect(jsonPath("$.model").value(vehicle.getModel()))
                 .andExpect(jsonPath("$.modelYear").value(vehicle.getModelYear()));
     }

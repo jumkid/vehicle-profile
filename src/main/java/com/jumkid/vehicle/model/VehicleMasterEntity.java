@@ -1,12 +1,15 @@
 package com.jumkid.vehicle.model;
 
+import com.jumkid.vehicle.enums.VehicleEngineField;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import com.jumkid.vehicle.enums.VehicleTables;
+import com.jumkid.vehicle.enums.VehicleField;
 
 @Entity
 @Table(name = "vehicle_master")
@@ -20,35 +23,36 @@ public class VehicleMasterEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = VehicleTables.Fields.VEHICLE_ID, updatable = false, nullable = false)
+    @Column(name = VehicleField.Fields.VEHICLE_ID, updatable = false, nullable = false)
     private String vehicleId;
 
-    @Column(name = VehicleTables.Fields.NAME)
+    @Column(name = VehicleField.Fields.NAME)
     private String name;
 
-    @Column(name = VehicleTables.Fields.MAKE)
+    @Column(name = VehicleField.Fields.MAKE)
     private String make;
 
-    @Column(name = VehicleTables.Fields.MODEL)
+    @Column(name = VehicleField.Fields.MODEL)
     private String model;
 
-    @Column(name = VehicleTables.Fields.MODEL_YEAR)
+    @Column(name = VehicleField.Fields.MODEL_YEAR)
     private Integer modelYear;
 
-    @Column(name = VehicleTables.Fields.CREATION_DATE)
+    @Column(name = VehicleField.Fields.CREATION_DATE)
     private LocalDateTime creationDate;
 
-    @Column(name = VehicleTables.Fields.CREATED_BY)
+    @Column(name = VehicleField.Fields.CREATED_BY)
     private String createdBy;
 
-    @Column(name = VehicleTables.Fields.MODIFICATION_DATE)
+    @Column(name = VehicleField.Fields.MODIFICATION_DATE)
     private LocalDateTime modificationDate;
 
-    @Column(name = VehicleTables.Fields.MODIFIED_BY)
+    @Column(name = VehicleField.Fields.MODIFIED_BY)
     private String modifiedBy;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = VehicleTables.Fields.VEHICLE_ID)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = VehicleField.Fields.VEHICLE_ENGINE_ID,
+            referencedColumnName = VehicleEngineField.Fields.ID)
     private VehicleEngineEntity vehicleEngineEntity;
 
 }

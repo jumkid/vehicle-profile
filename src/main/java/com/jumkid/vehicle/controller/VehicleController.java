@@ -1,6 +1,7 @@
 package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.CommonResponse;
+import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.service.VehicleMasterService;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,12 @@ public class VehicleController {
         return vehicleMasterService.getUserVehicles();
     }
 
+    @GetMapping(value = "{vehicleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Vehicle getUserVehicle(@NotNull @Valid @PathVariable String vehicleId) {
+        return vehicleMasterService.getUserVehicle(vehicleId);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Vehicle save(@NotNull @Valid @RequestBody Vehicle vehicle){
@@ -41,9 +48,9 @@ public class VehicleController {
 
     @PostMapping(value = "{vehicleId}")
     @ResponseStatus(HttpStatus.OK)
-    public Vehicle save(@NotNull @Valid @PathVariable String vehicleId,
-                        @NotNull @Valid @RequestBody Vehicle vehicle){
-        return vehicleMasterService.saveUserVehicle(vehicleId, vehicle);
+    public Vehicle update(@NotNull @Valid @PathVariable String vehicleId,
+                        @NotNull @RequestBody Vehicle vehicle){
+        return vehicleMasterService.updateUserVehicle(vehicleId, vehicle);
     }
 
     @DeleteMapping(value = "{vehicleId}")
