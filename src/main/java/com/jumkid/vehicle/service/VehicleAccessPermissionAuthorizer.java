@@ -26,7 +26,7 @@ public class VehicleAccessPermissionAuthorizer {
         return vehicle.getAccessScope().equals(AccessScope.PUBLIC) || checkUserId(vehicle.getCreatedBy());
     }
 
-    public boolean hasUpdatePermission(String vehicleId) {
+    public boolean isOwner(String vehicleId) {
         VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
         return checkUserId(entity.getCreatedBy());

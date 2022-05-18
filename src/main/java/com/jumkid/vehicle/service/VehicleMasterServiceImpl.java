@@ -89,7 +89,6 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     @Override
     @Transactional
-    @PreAuthorize("@vehicleAccessPermissionAuthorizer.hasUpdatePermission(#vehicleId)")
     public Vehicle updateUserVehicle(String vehicleId, Vehicle vehicle) {
         VehicleMasterEntity updateEntity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
@@ -109,7 +108,6 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     @Override
     @Transactional
-    @PreAuthorize("@vehicleAccessPermissionAuthorizer.hasUpdatePermission(#vehicleId)")
     public void deleteUserVehicle(String vehicleId) {
         VehicleMasterEntity existingEntity = vehicleMasterRepository.getById(vehicleId);
 
