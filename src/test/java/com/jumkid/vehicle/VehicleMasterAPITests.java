@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -39,6 +40,8 @@ public class VehicleMasterAPITests {
 
     private Vehicle vehicle;
 
+    private VehicleMasterEntity entity;
+
     @Autowired
     private VehicleMapper vehicleMapper;
     @Autowired
@@ -54,7 +57,7 @@ public class VehicleMasterAPITests {
     public void setup() {
         try {
             vehicle = APITestsSetup.buildVehicle();
-            VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
+            entity = vehicleMapper.dtoToEntity(vehicle);
 
             when(vehicleMasterRepository.save(any(VehicleMasterEntity.class))).thenReturn(entity);
 
@@ -70,6 +73,7 @@ public class VehicleMasterAPITests {
     }
 
     @Test
+    @WithMockUser(username="test", password="test", authorities="user")
     public void whenGivenVehicle_shouldSaveVehicleEntity() throws Exception{
         mockMvc.perform(post("/vehicle")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -101,6 +105,7 @@ public class VehicleMasterAPITests {
     }
 
     @Test
+    @WithMockUser(username="test", password="test", authorities="user")
     public void whenGivenVehicleWithId_shouldUpdateVehicleEntity() throws Exception{
         Vehicle updateVehicle = Vehicle.builder()
                 .id(vehicle.getId())
@@ -126,7 +131,10 @@ public class VehicleMasterAPITests {
     }
 
     @Test
+    @WithMockUser(username="test", password="test", authorities="user")
     public void whenGivenVehicleId_shouldDeleteVehicleEntity() throws Exception {
+        when(vehicleMasterRepository.findById(vehicle.getId())).thenReturn(Optional.of(entity));
+
         mockMvc.perform(delete("/vehicle/" + vehicle.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());

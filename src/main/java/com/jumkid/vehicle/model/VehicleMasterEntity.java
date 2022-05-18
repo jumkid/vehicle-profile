@@ -1,5 +1,6 @@
 package com.jumkid.vehicle.model;
 
+import com.jumkid.vehicle.enums.AccessScope;
 import com.jumkid.vehicle.enums.VehicleEngineField;
 import com.jumkid.vehicle.enums.VehicleTransmissionField;
 import lombok.*;
@@ -36,6 +37,13 @@ public class VehicleMasterEntity {
 
     @Column(name = VehicleField.Fields.MODEL_YEAR)
     private Integer modelYear;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = VehicleField.Fields.ACCESS_SCOPE)
+    private AccessScope accessScope;
+
+    @Column(name = VehicleField.Fields.TRIM_LEVEL)
+    private String trimLevel;
 
     @Column(name = VehicleField.Fields.CREATION_DATE)
     private LocalDateTime creationDate;

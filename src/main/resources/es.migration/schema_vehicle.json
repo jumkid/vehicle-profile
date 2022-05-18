@@ -14,7 +14,13 @@
         "type": "integer",
         "index": false
       },
-      "engine": {
+      "accessScope": {
+        "type": "keyword"
+      },
+      "trimLevel": {
+        "type": "keyword"
+      },
+      "vehicleEngine": {
         "properties": {
           "name": {
             "type": "text"
@@ -39,21 +45,23 @@
           }
         }
       },
-      "transmission": {
-        "name": {
-          "type": "text"
-        },
-        "type": {
-          "type": "keyword"
-        },
-        "automaticType": {
-          "type": "keyword"
-        },
-        "availability": {
-          "type": "keyword"
-        },
-        "numberOfSpeeds": {
-          "type": "integer"
+      "vehicleTransmission": {
+        "properties": {
+          "name": {
+            "type": "text"
+          },
+          "type": {
+            "type": "keyword"
+          },
+          "automaticType": {
+            "type": "keyword"
+          },
+          "availability": {
+            "type": "keyword"
+          },
+          "numberOfSpeeds": {
+            "type": "integer"
+          }
         }
       }
     }

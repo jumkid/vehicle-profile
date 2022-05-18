@@ -2,6 +2,7 @@ package com.jumkid.vehicle.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jumkid.share.controller.dto.GenericDTO;
+import com.jumkid.vehicle.enums.AccessScope;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -31,6 +33,11 @@ public class Vehicle extends GenericDTO {
     @Min(1800)
     private Integer modelYear;
 
+    @NotNull(message = "Access scope is required")
+    private AccessScope accessScope;
+
+    private String trimLevel;
+
     @Valid
     private VehicleEngine vehicleEngine;
 
@@ -42,7 +49,8 @@ public class Vehicle extends GenericDTO {
      *
      */
     @Builder
-    public Vehicle(String id, String name, String make, String model, Integer modelYear,
+    public Vehicle(String id, String name, String make, String model, Integer modelYear, String trimLevel,
+                   AccessScope accessScope,
                    String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modificationDate,
                    VehicleEngine vehicleEngine, VehicleTransmission vehicleTransmission) {
 
@@ -53,6 +61,8 @@ public class Vehicle extends GenericDTO {
         this.make = make;
         this.model = model;
         this.modelYear = modelYear;
+        this.accessScope = accessScope;
+        this.trimLevel = trimLevel;
         this.vehicleEngine = vehicleEngine;
         this.vehicleTransmission = vehicleTransmission;
     }

@@ -72,6 +72,32 @@ paths:
                   $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
 
   '/vehicle/{vehicleId}':
+    get:
+      tags: [ 'v1' ]
+      operationId: get single vehicle
+      description: get single private vehicle profile with corresponding user id or public vehicle profile
+      parameters:
+        - name: vehicleId
+          description: vehicle identifier
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'    
+        '404'
+          description: NOT_FOUND
+          
     post:
       tags: [ 'v1' ]
       operationId: addVehicle
@@ -169,5 +195,59 @@ components:
           type: string
         modelYear:
           type: integer
-        userId:
+        trimLevel:
           type: string
+        accessScope:
+          $ref: '#/components/schemas/AccessScope'
+        vehicleEngine:
+          $ref: '#/components/schemas/VehicleEngine'
+        vehicleTransmission:
+          $ref: '#/components/schemas/VehicleTransmission'
+        createdBy:
+          type: string
+        creationDate:
+          $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/LocalDateTime'
+        modifiedBy:
+          type: string
+        modificationDate:
+          $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/LocalDateTime'
+
+    VehicleEngine:
+      description: Model of vehicle engine
+      properties:
+        vehicleEngineId:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+        cylinder:
+          type: integer
+        fuelType:
+          type: string
+        horsepower:
+          type: integer
+        torque:
+          type: integer
+        manufacturerEngineCode:
+          type: string
+
+    VehicleTransmission:
+      description: Model of vehicle transmission
+      properties:
+        vehicleTransmissionId:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+        availability:
+          type: string
+        automaticType:
+          type: string
+        numberOfSpeeds:
+          type: integer
+
+    AccessScope:
+      type: string
+      enum: [ public, private ]

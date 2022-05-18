@@ -14,6 +14,8 @@ import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -42,8 +44,8 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     @Autowired
     public VehicleMasterServiceImpl(VehicleMasterRepository vehicleMasterRepository,
                                     VehicleSearchRepository vehicleSearchRepository,
-                                    UserProfileManager userProfileManager,
-                                    VehicleMapper vehicleMapper, VehicleSearchMapper vehicleSearchMapper) {
+                                    UserProfileManager userProfileManager, VehicleMapper vehicleMapper,
+                                    VehicleSearchMapper vehicleSearchMapper) {
         this.vehicleMasterRepository = vehicleMasterRepository;
         this.vehicleSearchRepository = vehicleSearchRepository;
         this.userProfileManager = userProfileManager;
@@ -63,6 +65,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
+    @PostAuthorize("@vehicleAccessPermissionAuthorizer.hasViewPermission(returnObject)")
     public Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException {
         VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
@@ -86,6 +89,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     @Override
     @Transactional
+    @PreAuthorize("@vehicleAccessPermissionAuthorizer.hasUpdatePermission(#vehicleId)")
     public Vehicle updateUserVehicle(String vehicleId, Vehicle vehicle) {
         VehicleMasterEntity updateEntity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
@@ -105,6 +109,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     @Override
     @Transactional
+    @PreAuthorize("@vehicleAccessPermissionAuthorizer.hasUpdatePermission(#vehicleId)")
     public void deleteUserVehicle(String vehicleId) {
         VehicleMasterEntity existingEntity = vehicleMasterRepository.getById(vehicleId);
 
@@ -153,23 +158,14 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         return 0;
     }
 
-    private UserProfile getUserProfile() {
-        UserProfile userProfile = userProfileManager.fetchUserProfile();
-        if (userProfile == null) {
-            throw new UserProfileNotFoundException("User profile could not be found. Access is denied");
-        } else {
-            return userProfile;
-        }
-    }
-
     private void normalizeDTO(Vehicle dto) { normalizeDTO(null, dto, null);}
 
     private void normalizeDTO(String vehicleId, Vehicle dto, VehicleMasterEntity oldEntity) {
-        dto.setId(vehicleId);
+        if (vehicleId != null) { dto.setId(vehicleId); }
 
         LocalDateTime now = LocalDateTime.now();
-        UserProfile userProfile = userProfileManager.fetchUserProfile();
-        String userId = userProfile != null ? userProfile.getId() : null;
+        UserProfile userProfile = getUserProfile();
+        String userId = userProfile.getId();
 
         if (oldEntity != null) {
             dto.setCreatedBy(oldEntity.getCreatedBy());
@@ -187,6 +183,15 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
         dto.setModifiedBy(userId);
         dto.setModificationDate(now);
+    }
+
+    private UserProfile getUserProfile() {
+        UserProfile userProfile = userProfileManager.fetchUserProfile();
+        if (userProfile == null) {
+            throw new UserProfileNotFoundException("User profile could not be found. Access is denied");
+        } else {
+            return userProfile;
+        }
     }
 
 }

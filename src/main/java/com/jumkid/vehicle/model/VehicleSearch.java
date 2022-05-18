@@ -1,6 +1,7 @@
 package com.jumkid.vehicle.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.jumkid.vehicle.enums.AccessScope;
 import lombok.*;
 
 import java.io.Serializable;
@@ -22,6 +23,10 @@ public class VehicleSearch implements Serializable {
     private String model;
 
     private Integer modelYear;
+
+    private AccessScope accessScope;
+
+    private String trimLevel;
 
     private VehicleEngineSearch vehicleEngine;
 

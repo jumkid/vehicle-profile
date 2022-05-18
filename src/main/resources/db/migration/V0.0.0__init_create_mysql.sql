@@ -24,7 +24,8 @@ CREATE TABLE vehicle_master (
     make VARCHAR(100) NOT NULL,
     model VARCHAR(100) NOT NULL,
     model_year INTEGER,
-
+    access_scope VARCHAR(32),
+    trim_level VARCHAR(32),
     vehicle_engine_id INTEGER,
     vehicle_transmission_id INTEGER,
 

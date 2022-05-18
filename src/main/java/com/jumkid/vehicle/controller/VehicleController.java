@@ -1,7 +1,6 @@
 package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.CommonResponse;
-import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.service.VehicleMasterService;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import lombok.extern.slf4j.Slf4j;

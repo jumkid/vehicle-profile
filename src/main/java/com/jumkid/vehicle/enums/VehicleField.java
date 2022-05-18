@@ -15,6 +15,12 @@ public enum VehicleField {
     @FieldNameConstants.Include MAKE("make"),
     @FieldNameConstants.Include MODEL("model"),
 
+    @FieldNameConstants.Include ACCESS_SCOPE("access_scope"),
+    @FieldNameConstants.Include ACCESSSCOPE("accessScope"),
+
+    @FieldNameConstants.Include TRIM_LEVEL("trim_level"),
+    @FieldNameConstants.Include TRIMLEVEL("trimLevel"),
+
     @FieldNameConstants.Include MODEL_YEAR("model_year"),
     @FieldNameConstants.Include MODELYEAR("modelYear"),
 

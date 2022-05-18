@@ -1,5 +1,6 @@
 package com.jumkid.vehicle;
 
+import com.jumkid.vehicle.enums.AccessScope;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.dto.VehicleEngine;
 import com.jumkid.vehicle.service.dto.VehicleTransmission;
@@ -18,7 +19,9 @@ public class APITestsSetup {
                 .make("toyota")
                 .model("highlander")
                 .modelYear(2022)
+                .accessScope(AccessScope.PRIVATE)
                 .modificationDate(LocalDateTime.now())
+                .createdBy("test")
                 .vehicleEngine(VehicleEngine.builder()
                                 .name("test vehicle engine")
                                 .type("V-Engine")
