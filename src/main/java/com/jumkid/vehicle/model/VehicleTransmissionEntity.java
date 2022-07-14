@@ -25,6 +25,9 @@ public class VehicleTransmissionEntity {
     @Column(name = VehicleTransmissionField.Fields.TYPE)
     private String type;
 
+    @Column(name = VehicleTransmissionField.Fields.DRIVETRAIN)
+    private String drivetrain;
+
     @Column(name = VehicleTransmissionField.Fields.AVAILABILITY)
     private String availability;
 

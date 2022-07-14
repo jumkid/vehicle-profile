@@ -45,6 +45,9 @@ public class VehicleMasterEntity {
     @Column(name = VehicleField.Fields.TRIM_LEVEL)
     private String trimLevel;
 
+    @Column(name = VehicleField.Fields.MEDIA_GALLERY_ID)
+    private String mediaGalleryId;
+
     @Column(name = VehicleField.Fields.CREATION_DATE)
     private LocalDateTime creationDate;
 

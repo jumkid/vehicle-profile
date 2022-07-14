@@ -23,4 +23,6 @@ public class VehicleTransmission {
 
     private Integer numberOfSpeeds;
 
+    private String drivetrain;
+
 }

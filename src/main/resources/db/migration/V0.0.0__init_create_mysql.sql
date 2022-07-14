@@ -3,9 +3,12 @@ CREATE TABLE vehicle_engine (
     name VARCHAR(255),
     type VARCHAR(100),
     cylinder SMALLINT,
+    displacement FLOAT,
     fuel_type VARCHAR(100),
     horsepower SMALLINT,
+    horsepower_rpm SMALLINT,
     torque SMALLINT,
+    torque_rpm SMALLINT,
     manufacturer_engine_code VARCHAR(100)
 );
 
@@ -15,6 +18,7 @@ CREATE TABLE vehicle_transmission (
     availability VARCHAR(100),
     automatic_type VARCHAR(100),
     type VARCHAR(100),
+    drivetrain VARCHAR(100),
     number_of_speeds SMALLINT
 );
 
@@ -28,10 +32,12 @@ CREATE TABLE vehicle_master (
     trim_level VARCHAR(32),
     vehicle_engine_id INTEGER,
     vehicle_transmission_id INTEGER,
+    media_gallery_id VARCHAR(100),
 
     created_by VARCHAR(255),
     creation_date DATETIME,
     modified_by VARCHAR(255),
     modification_date DATETIME,
-    FOREIGN KEY (vehicle_engine_id) REFERENCES vehicle_engine(id) ON DELETE CASCADE
+    FOREIGN KEY (vehicle_engine_id) REFERENCES vehicle_engine(id) ON DELETE CASCADE,
+    FOREIGN KEY (vehicle_transmission_id) REFERENCES vehicle_transmission(id) ON DELETE CASCADE
 )

@@ -11,46 +11,37 @@ info:
   license:
     name: Jumkid Public License
     url: 'http://license.jumkid.com'
-
 servers:
   - description: Testing
-    url: 'http://test.jumkid.com'
+    url: 'http://localhost:8084'
   - description: Live production
     url: 'http://api.jumkid.com'
-
 tags:
   - name: v1
     description: API for version 0.9.1
   - name: test
     description: API for test
-
 paths:
-  '/vehicle':
+  /vehicle:
     get:
-      tags: [ 'v1' ]
+      tags:
+        - v1
       operationId: getVehicles
       description: get all vehicles by user
+      security:
+        - Authorization: []
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Vehicle'
+          $ref: '#/components/responses/200-vehicle'
         '403':
-          description: FORBIDDEN
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
-
+          $ref: '#/components/responses/403-access-deny'
     post:
-      tags: [ 'v1' ]
+      tags:
+        - v1
       operationId: addVehicle
       description: add new activity for user
+      security:
+        - Authorization: []
       requestBody:
         content:
           application/json:
@@ -58,91 +49,57 @@ paths:
               $ref: '#/components/schemas/Vehicle'
       responses:
         '201':
-          description: CREATED
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Vehicle'
+          $ref: '#/components/responses/201-created'
         '403':
-          description: FORBIDDEN
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
-
-  '/vehicle/{vehicleId}':
+          $ref: '#/components/responses/403-access-deny'
+  '/vehicle/{id}':
     get:
-      tags: [ 'v1' ]
-      operationId: get single vehicle
+      tags:
+        - v1
+      operationId: getUserVehicle
       description: get single private vehicle profile with corresponding user id or public vehicle profile
+      security:
+        - Authorization: []
       parameters:
-        - name: vehicleId
-          description: vehicle identifier
-          in: path
-          required: true
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Vehicle'
+          $ref: '#/components/responses/200-vehicle'
         '403':
-          description: FORBIDDEN
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'    
-        '404'
+          $ref: '#/components/responses/403-access-deny'
+        '404':
           description: NOT_FOUND
-          
-    post:
-      tags: [ 'v1' ]
-      operationId: addVehicle
-      description: add new activity for user
+    put:
+      tags:
+        - v1
+      operationId: updateVehicle
+      description: update existing user vehicle
+      security:
+        - Authorization: []
       parameters:
-        - name: vehicleId
-          description: vehicle identifier
-          in: path
-          required: true
+        - $ref: '#/components/parameters/id'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Vehicle'
+        $ref: '#/components/requestBodies/vehicle'
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Vehicle'
+          $ref: '#/components/responses/200-vehicle'
         '403':
-          description: FORBIDDEN
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
+          $ref: '#/components/responses/403-access-deny'
         '409':
           description: CONFLICT
           content:
             application/json:
               schema:
-                items:
-                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
-
+                $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
     delete:
-      tags: [ 'v1' ]
+      tags:
+        - v1
       operationId: deleteVehicle
       description: delete an existing vehicle for user
+      security:
+        - Authorization: []
       parameters:
-        - name: vehicleId
-          description: vehicle identifier
-          in: path
-          required: true
+        - $ref: '#/components/parameters/id'
       responses:
         '204':
           description: NOT_FOUND
@@ -153,13 +110,14 @@ paths:
               schema:
                 items:
                   $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
-    
-  '/vehicle/import':
+  /vehicle/import:
     post:
       tags:
         - v1
       operationId: import
       description: import vehicle data
+      security:
+        - Authorization: []
       requestBody:
         content:
           multipart/form-data:
@@ -179,7 +137,6 @@ paths:
             application/json:
               schema:
                 type: integer
-                
 components:
   schemas:
     Vehicle:
@@ -197,6 +154,8 @@ components:
           type: integer
         trimLevel:
           type: string
+        mediaGalleryId:
+          type: string
         accessScope:
           $ref: '#/components/schemas/AccessScope'
         vehicleEngine:
@@ -211,7 +170,6 @@ components:
           type: string
         modificationDate:
           $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/LocalDateTime'
-
     VehicleEngine:
       description: Model of vehicle engine
       properties:
@@ -231,7 +189,6 @@ components:
           type: integer
         manufacturerEngineCode:
           type: string
-
     VehicleTransmission:
       description: Model of vehicle transmission
       properties:
@@ -247,7 +204,51 @@ components:
           type: string
         numberOfSpeeds:
           type: integer
-
     AccessScope:
       type: string
-      enum: [ public, private ]
+      enum:
+        - public
+        - private
+  responses:
+    200-vehicle:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Vehicle'
+    403-access-deny:
+      description: FORBIDDEN
+      content:
+        application/json:
+          schema:
+            $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
+    201-created:
+      description: CREATED
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: string
+  parameters:
+    id:
+      name: id
+      description: vehicle identifier
+      in: path
+      required: true
+      schema:
+        type: string
+  requestBodies:
+    vehicle:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Vehicle'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+security:
+  - Authorization: []

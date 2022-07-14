@@ -13,6 +13,7 @@ public enum VehicleTransmissionField {
     @FieldNameConstants.Include AUTOMATIC_TYPE("automatic_type"),
     @FieldNameConstants.Include AUTOMATICTYPE("automaticType"),
 
+    @FieldNameConstants.Include DRIVETRAIN("drivetrain"),
     @FieldNameConstants.Include TYPE("type"),
     @FieldNameConstants.Include NUMBER_OF_SPEEDS("number_of_speeds"),
     @FieldNameConstants.Include NUMBEROFSPEEDS("numberOfSpeeds");

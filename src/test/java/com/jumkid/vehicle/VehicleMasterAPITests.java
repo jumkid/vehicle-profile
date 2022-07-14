@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -118,11 +119,13 @@ public class VehicleMasterAPITests {
         when(vehicleMasterRepository.findById(vehicle.getId()))
                 .thenReturn(Optional.of(entity));
         when(vehicleMasterRepository.save(any(VehicleMasterEntity.class))).thenReturn(entity);
+        when(vehicleSearchRepository.update(vehicle.getId(), vehicleSearchMapper.entityToSearchMeta(entity)))
+                .thenReturn(1);
 
-        mockMvc.perform(post("/vehicle/" + vehicle.getId())
+        mockMvc.perform(put("/vehicle/" + vehicle.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsBytes(updateVehicle)))
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.id").value(vehicle.getId()))
                 .andExpect(jsonPath("$.name").value(vehicle.getName()))
                 .andExpect(jsonPath("$.make").value(updateVehicle.getMake()))

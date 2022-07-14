@@ -3,8 +3,6 @@ package com.jumkid.vehicle.service.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,11 +19,15 @@ public class VehicleEngine {
 
     private Integer cylinder;
 
+    private Float displacement;
+
     private String fuelType;
 
     private Integer horsepower;
+    private Integer horsepowerRpm;
 
     private Integer torque;
+    private Integer torqueRpm;
 
     private String manufacturerEngineCode;
 

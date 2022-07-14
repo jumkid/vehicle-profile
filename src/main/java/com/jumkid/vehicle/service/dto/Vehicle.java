@@ -38,6 +38,8 @@ public class Vehicle extends GenericDTO {
 
     private String trimLevel;
 
+    private String mediaGalleryId;
+
     @Valid
     private VehicleEngine vehicleEngine;
 
@@ -50,7 +52,7 @@ public class Vehicle extends GenericDTO {
      */
     @Builder
     public Vehicle(String id, String name, String make, String model, Integer modelYear, String trimLevel,
-                   AccessScope accessScope,
+                   AccessScope accessScope, String mediaGalleryId,
                    String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modificationDate,
                    VehicleEngine vehicleEngine, VehicleTransmission vehicleTransmission) {
 
@@ -63,6 +65,8 @@ public class Vehicle extends GenericDTO {
         this.modelYear = modelYear;
         this.accessScope = accessScope;
         this.trimLevel = trimLevel;
+        this.mediaGalleryId = mediaGalleryId;
+
         this.vehicleEngine = vehicleEngine;
         this.vehicleTransmission = vehicleTransmission;
     }

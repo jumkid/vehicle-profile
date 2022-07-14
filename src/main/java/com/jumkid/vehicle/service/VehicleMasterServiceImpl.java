@@ -15,7 +15,6 @@ import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -59,7 +58,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         String userId = userProfile.getId();
 
         List<VehicleMasterEntity> vehicleMasterEntities = vehicleMasterRepository.findByCreatedBy(userId);
-        log.debug("Found {} domain data records for user {}", vehicleMasterEntities.size(), userId);
+        log.info("Found {} vehicles for user {}", vehicleMasterEntities.size(), userId);
 
         return vehicleMapper.entitiesToDTOs(vehicleMasterEntities);
     }
@@ -69,6 +68,8 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     public Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException {
         VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
+        log.info("Found vehicle with id {} records for user", vehicleId);
+
         return vehicleMapper.entityToDto(entity);
     }
 
@@ -80,7 +81,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
 
         entity = vehicleMasterRepository.save(entity);
-        log.debug("new user vehicle data saved");
+        log.info("new user vehicle data saved with id {}", entity.getVehicleId());
 
         vehicleSearchRepository.save(vehicleSearchMapper.entityToSearchMeta(entity));
 
@@ -98,10 +99,10 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         vehicleMapper.updateEntityFromDto(vehicle, updateEntity);
 
         updateEntity = vehicleMasterRepository.save(updateEntity);
-        log.debug("updated user vehicle master data");
+        log.info("updated user vehicle master data");
 
-        vehicleSearchRepository.update(vehicleId, vehicleSearchMapper.dtoToSearch(vehicle));
-        log.debug("updated user vehicle search indexer");
+        Integer count = vehicleSearchRepository.update(vehicleId, vehicleSearchMapper.dtoToSearch(vehicle));
+        log.debug("updated user vehicle search index rec {}", count);
 
         return vehicleMapper.entityToDto(updateEntity);
     }
@@ -109,11 +110,12 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     @Override
     @Transactional
     public void deleteUserVehicle(String vehicleId) {
-        VehicleMasterEntity existingEntity = vehicleMasterRepository.getById(vehicleId);
+        VehicleMasterEntity existingEntity = vehicleMasterRepository.findById(vehicleId)
+                .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
 
         try {
             vehicleMasterRepository.delete(existingEntity);
-            log.debug("Vehicle with id {} is removed.", vehicleId);
+            log.info("Vehicle with id {} is removed.", vehicleId);
 
             vehicleSearchRepository.delete(vehicleId);
         } catch (Exception e) {

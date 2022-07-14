@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.util.Locale;
 
 @Slf4j
 @Repository
@@ -31,7 +32,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
                                                                     .build();
             //Synchronous execution
             IndexResponse response = esClient.index(request);
-            log.info("created new index for doc with id {}", response.id());
+            log.debug("created new index for doc with id {}", response.id());
 
             return vehicleSearch;
         } catch (IOException ioe) {
@@ -42,7 +43,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
     }
 
     @Override
-    public VehicleSearch update(String vehicleId, VehicleSearch partialVehicleSearch) {
+    public Integer update(String vehicleId, VehicleSearch partialVehicleSearch) {
         UpdateRequest<VehicleSearch, VehicleSearch> updateRequest =
                 new UpdateRequest.Builder<VehicleSearch, VehicleSearch>()
                         .index(ES_IDX_ENDPOINT)
@@ -52,16 +53,19 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
 
         try {
             UpdateResponse<VehicleSearch> response = esClient.update(updateRequest, VehicleSearch.class);
-            log.info("updated doc with id {}", response.id());
+            log.debug("updated doc with id {}", response.id());
 
-            if (response.get() != null) return response.get().source();
+            if (response.result() != null
+                    && response.result().name().toUpperCase(Locale.ROOT).equals("UPDATED")) {
+                return 1;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             log.error("failed to delete doc {} ", e.getMessage());
             throw new VehicleSearchException("Not able to delete vehicle search, please contact system administrator.");
         }
 
-        return null;
+        return 0;
     }
 
     @Override
@@ -72,7 +76,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
                 .build();
         try {
             DeleteResponse response = esClient.delete(request);
-            log.info("deleted doc with id {}", response.id());
+            log.debug("deleted doc with id {}", response.id());
 
         } catch (IOException e) {
             e.printStackTrace();

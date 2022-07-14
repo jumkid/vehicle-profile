@@ -34,10 +34,10 @@ public class VehicleController {
         return vehicleMasterService.getUserVehicles();
     }
 
-    @GetMapping(value = "{vehicleId}")
+    @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Vehicle getUserVehicle(@NotNull @Valid @PathVariable String vehicleId) {
-        return vehicleMasterService.getUserVehicle(vehicleId);
+    public Vehicle getUserVehicle(@NotNull @Valid @PathVariable String id) {
+        return vehicleMasterService.getUserVehicle(id);
     }
 
     @PostMapping
@@ -46,20 +46,20 @@ public class VehicleController {
         return vehicleMasterService.saveUserVehicle(vehicle);
     }
 
-    @PostMapping(value = "{vehicleId}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("@vehicleAccessPermissionAuthorizer.isOwner(#vehicleId)")
-    public Vehicle update(@NotNull @Valid @PathVariable String vehicleId,
-                        @NotNull @RequestBody Vehicle vehicle){
-        return vehicleMasterService.updateUserVehicle(vehicleId, vehicle);
+    @PutMapping(value = "{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PreAuthorize("@vehicleAccessPermissionAuthorizer.isOwner(#id)")
+    public Vehicle update(@NotNull @Valid @PathVariable String id,
+                        @NotNull @RequestBody Vehicle partialVehicle){
+        return vehicleMasterService.updateUserVehicle(id, partialVehicle);
     }
 
-    @DeleteMapping(value = "{vehicleId}")
+    @DeleteMapping(value = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@vehicleAccessPermissionAuthorizer.isOwner(#vehicleId)")
-    public CommonResponse deleteUserVehicle(@PathVariable String vehicleId) {
-        vehicleMasterService.deleteUserVehicle(vehicleId);
-        return CommonResponse.builder().success(true).data(String.valueOf(vehicleId)).build();
+    @PreAuthorize("@vehicleAccessPermissionAuthorizer.isOwner(#id)")
+    public CommonResponse deleteUserVehicle(@PathVariable String id) {
+        vehicleMasterService.deleteUserVehicle(id);
+        return CommonResponse.builder().success(true).data(String.valueOf(id)).build();
     }
 
     @PostMapping(value = "import")

@@ -24,6 +24,9 @@ public enum VehicleField {
     @FieldNameConstants.Include MODEL_YEAR("model_year"),
     @FieldNameConstants.Include MODELYEAR("modelYear"),
 
+    @FieldNameConstants.Include MEDIA_GALLERY_ID("media_gallery_id"),
+    @FieldNameConstants.Include MEDIAGALLERYID("mediaGalleryId"),
+
     @FieldNameConstants.Include CREATION_DATE("creation_date"),
     @FieldNameConstants.Include CREATED_BY("created_by"),
     @FieldNameConstants.Include MODIFICATION_DATE("modification_date"),

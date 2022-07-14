@@ -31,13 +31,22 @@
           "cylinder": {
             "type": "integer"
           },
+          "displacement": {
+            "type": "float"
+          },
           "fuelType": {
             "type": "keyword"
           },
           "horsepower": {
             "type": "integer"
           },
+          "horsepowerRpm": {
+            "type": "integer"
+          },
           "torque": {
+            "type": "integer"
+          },
+          "torqueRpm": {
             "type": "integer"
           },
           "manufacturerEngineCode": {
@@ -54,6 +63,9 @@
             "type": "keyword"
           },
           "automaticType": {
+            "type": "keyword"
+          },
+          "drivetrain": {
             "type": "keyword"
           },
           "availability": {

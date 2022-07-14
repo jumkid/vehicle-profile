@@ -28,14 +28,23 @@ public class VehicleEngineEntity {
     @Column(name = VehicleEngineField.Fields.CYLINDER)
     private Integer cylinder;
 
+    @Column(name = VehicleEngineField.Fields.DISPLACEMENT)
+    private Float displacement;
+
     @Column(name = VehicleEngineField.Fields.FUEL_TYPE)
     private String fuelType;
 
     @Column(name = VehicleEngineField.Fields.HORSEPOWER)
     private Integer horsepower;
 
+    @Column(name = VehicleEngineField.Fields.HORSEPOWER_RPM)
+    private Integer horsepowerRpm;
+
     @Column(name = VehicleEngineField.Fields.TORQUE)
     private Integer torque;
+
+    @Column(name = VehicleEngineField.Fields.TORQUE_RPM)
+    private Integer torqueRpm;
 
     @Column(name = VehicleEngineField.Fields.MANUFACTURER_ENGINE_CODE)
     private String manufacturerEngineCode;
