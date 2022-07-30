@@ -2,13 +2,17 @@ package com.jumkid.vehicle.repository;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.*;
+import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
+import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.model.VehicleSearch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -40,6 +44,32 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
             log.error("failed to create index {} ", ioe.getMessage());
             throw new VehicleSearchException("Not able to save vehicle search into Elasticsearch, please contact system administrator.");
         }
+    }
+
+    @Override
+    public Integer saveAll(List<VehicleSearch> vehicleSearchList) {
+        try {
+            BulkRequest.Builder reqBuilder = new BulkRequest.Builder();
+
+            for (VehicleSearch vehicleSearch : vehicleSearchList) {
+                reqBuilder.operations(op -> op.index(idx -> idx.index(ES_IDX_ENDPOINT)
+                                                            .document(vehicleSearch)
+                                                            .id(vehicleSearch.getId())
+                ));
+            }
+            BulkResponse result = esClient.bulk(reqBuilder.build());
+
+            if (result.errors()) {
+                throw new VehicleImportException(result.items().stream()
+                        .map(item -> item.error() != null ? item.error().reason() : null)
+                        .collect(Collectors.toList()));
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            log.error("failed to create bulk indexes {}", ioe.getMessage());
+            throw new VehicleSearchException("Not able to save a list of vehicle search, please contact system administrator.");
+        }
+        return vehicleSearchList.size();
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.jumkid.share.controller.response.CustomErrorResponse;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
 import com.jumkid.vehicle.exception.ModificationDatetimeNotFoundException;
 import com.jumkid.vehicle.exception.VehicleDataOutdatedException;
+import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
@@ -50,5 +51,14 @@ public class ExceptionHandlingAdvice {
     @ResponseStatus(NOT_FOUND)
     public CustomErrorResponse handleNotFoundException(RuntimeException ex){
         return new CustomErrorResponse(Calendar.getInstance().getTime(), ex.getMessage());
+    }
+
+    @ExceptionHandler({VehicleImportException.class})
+    @ResponseStatus(NOT_ACCEPTABLE)
+    public CustomErrorResponse handleVehicleImportException(VehicleImportException vie) {
+        return CustomErrorResponse.builder()
+                .timestamp(Calendar.getInstance().getTime())
+                .details(vie.getImportErrors())
+                .build();
     }
 }

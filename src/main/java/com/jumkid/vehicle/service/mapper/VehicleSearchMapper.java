@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+import java.util.List;
+
 @Mapper(componentModel="spring")
 public interface VehicleSearchMapper {
 
@@ -20,4 +22,6 @@ public interface VehicleSearchMapper {
     @Mapping(target="vehicleTransmission", source="dto.vehicleTransmission")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     VehicleSearch dtoToSearch(Vehicle dto);
+
+    List<VehicleSearch> entitiesToSearches(List<VehicleMasterEntity> entityList);
 }
