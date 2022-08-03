@@ -75,6 +75,12 @@
             "type": "integer"
           }
         }
+      },
+      "creationDate": {
+        "type": "date"
+      },
+      "createdBy": {
+        "type": "keyword"
       }
     }
   }

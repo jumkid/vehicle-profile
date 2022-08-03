@@ -24,4 +24,6 @@ public interface VehicleSearchMapper {
     VehicleSearch dtoToSearch(Vehicle dto);
 
     List<VehicleSearch> entitiesToSearches(List<VehicleMasterEntity> entityList);
+
+    List<VehicleSearch> dtoListToSearches(List<Vehicle> dtoList);
 }

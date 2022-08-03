@@ -7,10 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/vehicle")
+@Validated
 public class VehicleController {
 
     private final VehicleMasterService vehicleMasterService;
@@ -31,7 +34,18 @@ public class VehicleController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<Vehicle> getUserVehicles() {
+        log.info("fetch all user vehicles");
+
         return vehicleMasterService.getUserVehicles();
+    }
+
+    @GetMapping(value = "/search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Vehicle> searchUserVehicle(@NotNull @Valid @RequestParam String keyword,
+                                           @Min(1) @Valid @RequestParam Integer size) {
+        log.info("search user vehicle by keyword {}, size {}", keyword, size);
+
+        return vehicleMasterService.searchUserVehicles(keyword, size);
     }
 
     @GetMapping(value = "{id}")

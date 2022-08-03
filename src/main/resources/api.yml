@@ -32,7 +32,7 @@ paths:
         - Authorization: []
       responses:
         '200':
-          $ref: '#/components/responses/200-vehicle'
+          $ref: '#/components/responses/200-vehicles'
         '403':
           $ref: '#/components/responses/403-access-deny'
     post:
@@ -52,6 +52,31 @@ paths:
           $ref: '#/components/responses/201-created'
         '403':
           $ref: '#/components/responses/403-access-deny'
+  '/vehicle/search':
+    get:
+      tags:
+        - v1
+        - test
+      operationId: searchUserVehicle
+      description: search vehicle profiles with keyword
+      security:
+        - Authorization: []
+      parameters:
+        - name: keyword
+          description: search keyword
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          description: search result size
+          in: query
+          required: true
+          schema:
+            type: integer    
+      responses:
+        '200':
+          $ref: '#/components/responses/200-vehicles'
   '/vehicle/{id}':
     get:
       tags:
@@ -215,9 +240,15 @@ components:
       content:
         application/json:
           schema:
+            $ref: '#/components/schemas/Vehicle'
+    200-vehicles:
+      description: OK
+      content:
+        application/json:
+          schema:
             type: array
             items:
-              $ref: '#/components/schemas/Vehicle'
+              $ref: '#/components/schemas/Vehicle'          
     403-access-deny:
       description: FORBIDDEN
       content:

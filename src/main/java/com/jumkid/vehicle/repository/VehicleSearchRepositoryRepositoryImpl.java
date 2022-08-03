@@ -1,8 +1,11 @@
 package com.jumkid.vehicle.repository;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.*;
-import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.model.VehicleSearch;
@@ -27,6 +30,33 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
     }
 
     @Override
+    public List<VehicleSearch> search(String keyword, Integer size, String userId) {
+        // Search by user id
+        Query byUser = MatchQuery.of(m -> m
+                .field(VehicleField.CREATEDBY.value())
+                .query(userId)
+        )._toQuery();
+
+        try {
+            SearchResponse<VehicleSearch> response = esClient.search(builder -> builder
+                            .index(ES_IDX_ENDPOINT)
+                            .size(size)
+                            .q(keyword)
+                            .postFilter(byUser),
+                    VehicleSearch.class);
+
+            assert response.hits().total() != null;
+            log.info("found total {} vehicle profiles for keyword search", response.hits().total().value());
+            return response.hits().hits().stream().map(Hit::source).collect(Collectors.toList());
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            log.error("failed to search vehicle profiles {}", ioe.getMessage());
+            throw new VehicleSearchException("failed to search vehicle profiles");
+        }
+    }
+
+    @Override
     public VehicleSearch save(VehicleSearch vehicleSearch) {
         try {
             IndexRequest<VehicleSearch> request = new IndexRequest.Builder<VehicleSearch>()
@@ -47,7 +77,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
     }
 
     @Override
-    public Integer saveAll(List<VehicleSearch> vehicleSearchList) {
+    public Integer saveAll(List<VehicleSearch> vehicleSearchList) throws VehicleImportException{
         try {
             BulkRequest.Builder reqBuilder = new BulkRequest.Builder();
 

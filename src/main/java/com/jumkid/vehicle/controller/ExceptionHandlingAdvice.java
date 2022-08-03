@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.Calendar;
 import java.util.stream.Collectors;
 
@@ -29,7 +31,7 @@ public class ExceptionHandlingAdvice {
         return new CustomErrorResponse(Calendar.getInstance().getTime(), ex.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(BAD_REQUEST)
     public CustomErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.warn("The provided argument is missing or invalid.", ex);
@@ -37,6 +39,21 @@ public class ExceptionHandlingAdvice {
                 .timestamp(Calendar.getInstance().getTime())
                 .property(ex.getFieldErrors().stream().map(FieldError::getField).collect(Collectors.toList()))
                 .details(ex.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList()))
+                .build();
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public CustomErrorResponse handlerConstraintViolationException(ConstraintViolationException ex) {
+        log.warn("The provided argument is invalid.", ex);
+        return CustomErrorResponse.builder()
+                .timestamp(Calendar.getInstance().getTime())
+                .property(ex.getConstraintViolations().stream()
+                        .map(constraintViolation -> constraintViolation.getPropertyPath().toString())
+                        .collect(Collectors.toList()))
+                .details(ex.getConstraintViolations().stream()
+                        .map(ConstraintViolation::getMessage)
+                        .collect(Collectors.toList()))
                 .build();
     }
 

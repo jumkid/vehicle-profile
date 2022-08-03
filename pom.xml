@@ -26,7 +26,7 @@
         <flyway.version>8.1.0</flyway.version>
         <mysql.driver.version>8.0.28</mysql.driver.version>
         <h2.db.version>2.1.210</h2.db.version>
-        <elasticsearch.version>8.1.0</elasticsearch.version>
+        <elasticsearch.version>8.3.3</elasticsearch.version>
 
         <!-- jumkid modules -->
         <sharejar.version>1.0.1</sharejar.version>

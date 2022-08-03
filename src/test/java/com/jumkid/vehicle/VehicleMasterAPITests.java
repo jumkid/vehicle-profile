@@ -21,13 +21,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,15 +58,13 @@ public class VehicleMasterAPITests {
     public void setup() {
         try {
             vehicle = APITestsSetup.buildVehicle();
+
             entity = vehicleMapper.dtoToEntity(vehicle);
 
             when(vehicleMasterRepository.save(any(VehicleMasterEntity.class))).thenReturn(entity);
 
             when(vehicleSearchRepository.save(any(VehicleSearch.class)))
                     .thenReturn(vehicleSearchMapper.entityToSearchMeta(entity));
-
-            when(vehicleMasterRepository.getById(vehicle.getId()))
-                    .thenReturn(vehicleMapper.dtoToEntity(vehicle));
 
         } catch (Exception e) {
             Assert.fail();
@@ -141,6 +139,27 @@ public class VehicleMasterAPITests {
         mockMvc.perform(delete("/vehicle/" + vehicle.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(username="test", password="test", authorities="user")
+    public void whenGivenKeywordAndSizeSearch_shouldGetSearchResult() throws Exception {
+        String keyword = "keyword";
+        Integer size = 10;
+
+        List<Vehicle> vehicleList = APITestsSetup.buildVehicles();
+        when(vehicleSearchRepository.search(keyword, size, "test")).thenReturn(vehicleSearchMapper.dtoListToSearches(vehicleList));
+        for (Vehicle vehicle : vehicleList) {
+            when(vehicleMasterRepository.findById(vehicle.getId())).thenReturn(Optional.of(vehicleMapper.dtoToEntity(vehicle)));
+        }
+
+        mockMvc.perform(get("/vehicle/search")
+                .param("keyword", keyword)
+                .param("size", size.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(10)));
+
     }
 
 }

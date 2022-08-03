@@ -4,7 +4,9 @@ import com.jumkid.share.security.exception.UserProfileNotFoundException;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
+import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
+import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
@@ -20,7 +22,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,7 +45,9 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     @Autowired
     public VehicleMasterServiceImpl(VehicleMasterRepository vehicleMasterRepository,
                                     VehicleSearchRepository vehicleSearchRepository,
-                                    UserProfileManager userProfileManager, VehicleMasterImportHandler vehicleMasterImportHandler, DTOHandler dtoHandler, VehicleMapper vehicleMapper,
+                                    UserProfileManager userProfileManager,
+                                    VehicleMasterImportHandler vehicleMasterImportHandler,
+                                    DTOHandler dtoHandler, VehicleMapper vehicleMapper,
                                     VehicleSearchMapper vehicleSearchMapper) {
         this.vehicleMasterRepository = vehicleMasterRepository;
         this.vehicleSearchRepository = vehicleSearchRepository;
@@ -54,13 +60,35 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     @Override
     public List<Vehicle> getUserVehicles() {
-        UserProfile userProfile = userProfileManager.fetchUserProfile();
-        String userId = userProfile.getId();
+        String userId = getCurrentUserId();
 
         List<VehicleMasterEntity> vehicleMasterEntities = vehicleMasterRepository.findByCreatedBy(userId);
         log.info("Found {} vehicles for user {}", vehicleMasterEntities.size(), userId);
 
         return vehicleMapper.entitiesToDTOs(vehicleMasterEntities);
+    }
+
+    @Override
+    public List<Vehicle> searchUserVehicles(String keyword, Integer size) throws VehicleSearchException{
+        size = ( size == null ) ? 20 : size;
+        String userId = getCurrentUserId();
+
+        try {
+
+            List<VehicleSearch> searchResult = vehicleSearchRepository.search(keyword, size, userId);
+            if (!searchResult.isEmpty()) {
+                return searchResult.stream()
+                        .map(vehicleSearch -> this.getUserVehicle(vehicleSearch.getId()))
+                        .collect(Collectors.toList());
+            } else {
+                return Collections.emptyList();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new VehicleSearchException(e.getMessage());
+        }
+
     }
 
     @Override
@@ -130,6 +158,11 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         log.info("importing vehicle master data ...");
 
         return vehicleMasterImportHandler.batchImport(is);
+    }
+
+    private String getCurrentUserId() {
+        UserProfile userProfile = userProfileManager.fetchUserProfile();
+        return userProfile.getId();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.jumkid.vehicle.service;
 
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
+import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.service.dto.Vehicle;
 
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.util.List;
 public interface VehicleMasterService {
 
     List<Vehicle> getUserVehicles();
+
+    List<Vehicle> searchUserVehicles(String keyword, Integer size) throws VehicleSearchException;
 
     Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException;
 
