@@ -5,6 +5,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
@@ -30,24 +31,38 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
     }
 
     @Override
-    public List<VehicleSearch> search(String keyword, Integer size, String userId) {
+    public PagingResults<VehicleSearch> search(String keyword, Integer size, Integer page, String userId) {
         // Search by user id
         Query byUser = MatchQuery.of(m -> m
                 .field(VehicleField.CREATEDBY.value())
                 .query(userId)
         )._toQuery();
 
+        final int _size = ( size == null ) ? 20 : size;
+        final int _page = ( page == null ) ? 0 : page;
+        Integer from = _size * (_page - 1);
+
         try {
             SearchResponse<VehicleSearch> response = esClient.search(builder -> builder
                             .index(ES_IDX_ENDPOINT)
-                            .size(size)
+                            .size(_size)
+                            .from(from)
                             .q(keyword)
                             .postFilter(byUser),
                     VehicleSearch.class);
 
             assert response.hits().total() != null;
+            final long total = response.hits().total().value();
             log.info("found total {} vehicle profiles for keyword search", response.hits().total().value());
-            return response.hits().hits().stream().map(Hit::source).collect(Collectors.toList());
+
+            List<VehicleSearch> results = response.hits().hits().stream().map(Hit::source).collect(Collectors.toList());
+
+            return PagingResults.<VehicleSearch>builder()
+                    .total(total)
+                    .page(page)
+                    .size(size)
+                    .resultSet(results)
+                    .build();
 
         } catch (IOException ioe) {
             ioe.printStackTrace();

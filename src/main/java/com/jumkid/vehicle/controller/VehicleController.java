@@ -1,6 +1,8 @@
 package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.CommonResponse;
+import com.jumkid.share.controller.response.PagingResponse;
+import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.vehicle.service.VehicleMasterService;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/vehicle")
+@RequestMapping("/vehicles")
 @Validated
 public class VehicleController {
 
@@ -41,11 +43,20 @@ public class VehicleController {
 
     @GetMapping(value = "/search")
     @ResponseStatus(HttpStatus.OK)
-    public List<Vehicle> searchUserVehicle(@NotNull @Valid @RequestParam String keyword,
-                                           @Min(1) @Valid @RequestParam Integer size) {
+    public PagingResponse<Vehicle> searchUserVehicle(@NotNull @Valid @RequestParam String keyword,
+                                            @Min(1) @Valid @RequestParam Integer size,
+                                            @Min(1) @Valid @RequestParam Integer page) {
         log.info("search user vehicle by keyword {}, size {}", keyword, size);
 
-        return vehicleMasterService.searchUserVehicles(keyword, size);
+        PagingResults<Vehicle> results = vehicleMasterService.searchUserVehicles(keyword, size, page);
+
+        return PagingResponse.<Vehicle>builder()
+                .success(true)
+                .total(results.getTotal())
+                .page(results.getPage())
+                .size(results.getSize())
+                .data(results.getResultSet())
+                .build();
     }
 
     @GetMapping(value = "{id}")

@@ -1,6 +1,7 @@
 package com.jumkid.vehicle.service;
 
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
+import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
@@ -69,20 +70,29 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
-    public List<Vehicle> searchUserVehicles(String keyword, Integer size) throws VehicleSearchException{
-        size = ( size == null ) ? 20 : size;
+    public PagingResults<Vehicle> searchUserVehicles(String keyword, Integer size, Integer page) throws VehicleSearchException{
         String userId = getCurrentUserId();
-
+        PagingResults<Vehicle> pagingResults = PagingResults.<Vehicle>builder()
+                                                        .page(page)
+                                                        .size(size)
+                                                        .build();
         try {
+            PagingResults<VehicleSearch> searchResult = vehicleSearchRepository.search(keyword, size, page, userId);
 
-            List<VehicleSearch> searchResult = vehicleSearchRepository.search(keyword, size, userId);
-            if (!searchResult.isEmpty()) {
-                return searchResult.stream()
+            if (!searchResult.getResultSet().isEmpty()) {
+                List<Vehicle> results = searchResult.getResultSet().stream()
                         .map(vehicleSearch -> this.getUserVehicle(vehicleSearch.getId()))
                         .collect(Collectors.toList());
+
+                pagingResults.setTotal(searchResult.getTotal());
+                pagingResults.setResultSet(results);
+
             } else {
-                return Collections.emptyList();
+                pagingResults.setTotal(0L);
+                pagingResults.setResultSet(Collections.emptyList());
+
             }
+            return pagingResults;
 
         } catch (Exception e) {
             e.printStackTrace();

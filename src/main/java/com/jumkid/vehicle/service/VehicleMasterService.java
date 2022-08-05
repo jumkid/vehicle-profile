@@ -1,5 +1,6 @@
 package com.jumkid.vehicle.service;
 
+import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.service.dto.Vehicle;
@@ -12,7 +13,7 @@ public interface VehicleMasterService {
 
     List<Vehicle> getUserVehicles();
 
-    List<Vehicle> searchUserVehicles(String keyword, Integer size) throws VehicleSearchException;
+    PagingResults<Vehicle> searchUserVehicles(String keyword, Integer size, Integer page) throws VehicleSearchException;
 
     Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException;
 

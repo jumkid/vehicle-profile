@@ -22,7 +22,7 @@ tags:
   - name: test
     description: API for test
 paths:
-  /vehicle:
+  /vehicles:
     get:
       tags:
         - v1
@@ -52,7 +52,7 @@ paths:
           $ref: '#/components/responses/201-created'
         '403':
           $ref: '#/components/responses/403-access-deny'
-  '/vehicle/search':
+  '/vehicles/search':
     get:
       tags:
         - v1
@@ -73,11 +73,17 @@ paths:
           in: query
           required: true
           schema:
-            type: integer    
+            type: integer
+        - name: page
+          description: page number of search result
+          in: query
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           $ref: '#/components/responses/200-vehicles'
-  '/vehicle/{id}':
+  '/vehicles/{id}':
     get:
       tags:
         - v1
@@ -135,7 +141,7 @@ paths:
               schema:
                 items:
                   $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
-  /vehicle/import:
+  /vehicles/import:
     post:
       tags:
         - v1

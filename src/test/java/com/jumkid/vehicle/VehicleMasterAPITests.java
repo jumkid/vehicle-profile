@@ -1,6 +1,7 @@
 package com.jumkid.vehicle;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
@@ -74,7 +75,7 @@ public class VehicleMasterAPITests {
     @Test
     @WithMockUser(username="test", password="test", authorities="user")
     public void whenGivenVehicle_shouldSaveVehicleEntity() throws Exception{
-        mockMvc.perform(post("/vehicle")
+        mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsBytes(vehicle)))
                 .andExpect(status().isCreated())
@@ -87,7 +88,7 @@ public class VehicleMasterAPITests {
 
     @Test
     public void whenGivenNull_shouldGetBadRequest() throws Exception{
-        mockMvc.perform(post("/vehicle")
+        mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsBytes(null)))
                 .andExpect(status().isBadRequest());
@@ -96,7 +97,7 @@ public class VehicleMasterAPITests {
     @Test
     public void whenGivenNullProperties_shouldGetBadRequest() throws Exception{
         Vehicle vehicleWithNullProperties = Vehicle.builder().build();
-        mockMvc.perform(post("/vehicle")
+        mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsBytes(vehicleWithNullProperties)))
                 .andExpect(status().isBadRequest())
@@ -120,7 +121,7 @@ public class VehicleMasterAPITests {
         when(vehicleSearchRepository.update(vehicle.getId(), vehicleSearchMapper.entityToSearchMeta(entity)))
                 .thenReturn(1);
 
-        mockMvc.perform(put("/vehicle/" + vehicle.getId())
+        mockMvc.perform(put("/vehicles/" + vehicle.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsBytes(updateVehicle)))
                 .andExpect(status().isAccepted())
@@ -136,7 +137,7 @@ public class VehicleMasterAPITests {
     public void whenGivenVehicleId_shouldDeleteVehicleEntity() throws Exception {
         when(vehicleMasterRepository.findById(vehicle.getId())).thenReturn(Optional.of(entity));
 
-        mockMvc.perform(delete("/vehicle/" + vehicle.getId())
+        mockMvc.perform(delete("/vehicles/" + vehicle.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
@@ -146,19 +147,32 @@ public class VehicleMasterAPITests {
     public void whenGivenKeywordAndSizeSearch_shouldGetSearchResult() throws Exception {
         String keyword = "keyword";
         Integer size = 10;
+        Integer page = 1;
 
         List<Vehicle> vehicleList = APITestsSetup.buildVehicles();
-        when(vehicleSearchRepository.search(keyword, size, "test")).thenReturn(vehicleSearchMapper.dtoListToSearches(vehicleList));
+        PagingResults<VehicleSearch> pagingResults = PagingResults.<VehicleSearch>builder()
+                .total(10L)
+                .page(page)
+                .size(size)
+                .resultSet(vehicleSearchMapper.dtoListToSearches(vehicleList))
+                .build();
+
+        when(vehicleSearchRepository.search(keyword, size, page, "test")).thenReturn(pagingResults);
         for (Vehicle vehicle : vehicleList) {
             when(vehicleMasterRepository.findById(vehicle.getId())).thenReturn(Optional.of(vehicleMapper.dtoToEntity(vehicle)));
         }
 
-        mockMvc.perform(get("/vehicle/search")
+        mockMvc.perform(get("/vehicles/search")
                 .param("keyword", keyword)
                 .param("size", size.toString())
+                .param("page", page.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(10)));
+                .andExpect(jsonPath("$.success").value(Boolean.TRUE))
+                .andExpect(jsonPath("$.total").value(10))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.page").value(1))
+                .andExpect(jsonPath("$.data", hasSize(10)));
 
     }
 
