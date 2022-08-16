@@ -48,7 +48,8 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
                             .size(_size)
                             .from(from)
                             .q(keyword)
-                            .postFilter(byUser),
+                            .postFilter(byUser)
+                            .fields(f -> f.field(VehicleField.ID.value())),
                     VehicleSearch.class);
 
             assert response.hits().total() != null;

@@ -9,6 +9,7 @@ import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -39,6 +42,16 @@ public class ExceptionHandlingAdvice {
                 .timestamp(Calendar.getInstance().getTime())
                 .property(ex.getFieldErrors().stream().map(FieldError::getField).collect(Collectors.toList()))
                 .details(ex.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList()))
+                .build();
+    }
+
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public CustomErrorResponse handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        return CustomErrorResponse.builder()
+                .timestamp(Calendar.getInstance().getTime())
+                .property(List.of(e.getParameterName()))
+                .details(List.of(Objects.requireNonNull(e.getMessage())))
                 .build();
     }
 
