@@ -1,6 +1,7 @@
 package com.jumkid.vehicle.service.handler;
 
 import com.jumkid.vehicle.enums.AccessScope;
+import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
@@ -100,9 +101,10 @@ public class VehicleMasterImportHandler {
             return vehicleMasterEntityList.size();
 
         } catch (IOException ioe) {
-
             log.error("Failed to extra data from the import file {}", ioe.getMessage());
-
+        } catch (Exception e) {
+            log.error("Failed to process import file {}", e.getMessage());
+            throw new VehicleImportException(List.of(e.getMessage()));
         }
 
         return 0;

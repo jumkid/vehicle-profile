@@ -1,6 +1,14 @@
-system-stock,toyota,highlander,2004,limited,,public,3.3L V6,Gas V6,6,3.3,gasoline,230,5800,242,4400,3MZ-FE,5 speed AT,Automatic,front wheel drive,,AT,5
-system-stock,toyota,highlander,2004,limited,,public,3.3L V6,Gas V6,6,3.3,gasoline,230,5800,242,4400,3MZ-FE,5 speed AT,Automatic,four wheel drive,,AT,5
-system-stock,toyota,highlander,2004,base,,public,2.4L I4,Gas I4,4,2.4,gasoline,160,5700,165,4000,2AZ-FE,4 speed AT,Automatic,front wheel drive,,AT,4
-system-stock,toyota,highlander,2004,base,,public,2.4L I4,Gas I4,4,2.4,gasoline,160,5700,165,4000,2AZ-FE,4 speed AT,Automatic,four wheel drive,,AT,4
-system-stock,toyota,highlander,2004,base,,public,3.3L V6,Gas V6,6,3.3,gasoline,230,5800,242,4400,3MZ-FE,5 speed AT,Automatic,front wheel drive,,AT,5
-system-stock,toyota,highlander,2004,base,,public,3.3L V6,Gas V6,6,3.3,gasoline,230,5800,242,4400,3MZ-FE,5 speed AT,Automatic,four wheel drive,,AT,5
+system-stock,toyota,highlander,2006,base,,public,2.4L I4,Gas I4,4,2.4,gasoline,155,5700,162,4000,2AZ-FE,4-speed ECT-i automatic transmission w/OD snow mode,Automatic,front wheel drive,,AT,4
+system-stock,toyota,highlander,2006,base,,public,2.4L I4,Gas I4,4,2.4,gasoline,155,5700,162,4000,2AZ-FE,4-speed ECT-i automatic transmission w/OD snow mode,Automatic,four wheel drive,,AT,4
+system-stock,toyota,highlander,2006,base,,public,3.3L V6 Hybrid,Gas/Electric V6,6,3.3,gasoline electric,208,5600,212,4400,3MZ-FE,CVT Automatic,Automatic,front wheel drive,,CVT,0
+system-stock,toyota,highlander,2006,base,,public,3.3L V6 Hybrid,Gas/Electric V6,6,3.3,gasoline electric,208,5600,212,4400,3MZ-FE,CVT Automatic,Automatic,four wheel drive,,CVT,0
+system-stock,toyota,highlander,2006,base,,public,3.3L V6,Gas V6,6,3.3,gasoline,215,5800,222,4400,3MZ-FE,5-speed ECT-i automatic transmission w/OD snow mode,Automatic,front wheel drive,,AT,5
+system-stock,toyota,highlander,2006,base,,public,3.3L V6,Gas V6,6,3.3,gasoline,215,5800,222,4400,3MZ-FE,5-speed ECT-i automatic transmission w/OD snow mode,Automatic,four wheel drive,,AT,5
+system-stock,toyota,highlander,2006,sport,,public,3.3L V6,Gas V6,6,3.3,gasoline,215,5800,222,4400,3MZ-FE,5-speed ECT-i automatic transmission w/OD snow mode,Automatic,front wheel drive,,AT,5
+system-stock,toyota,highlander,2006,sport,,public,3.3L V6,Gas V6,6,3.3,gasoline,215,5800,222,4400,3MZ-FE,5-speed ECT-i automatic transmission w/OD snow mode,Automatic,four wheel drive,,AT,5
+system-stock,toyota,highlander,2006,limited,,public,3.3L V6,Gas V6,6,3.3,gasoline,230,5800,242,4400,3MZ-FE,5 speed AT,Automatic,front wheel drive,,AT,5
+system-stock,toyota,highlander,2006,limited,,public,3.3L V6,Gas V6,6,3.3,gasoline,230,5800,242,4400,3MZ-FE,5 speed AT,Automatic,four wheel drive,,AT,5
+system-stock,toyota,highlander,2006,limited,,public,3.3L V6,Gas V6,6,3.3,gasoline,230,5800,242,4400,3MZ-FE,5 speed AT,Automatic,front wheel drive,,AT,5
+system-stock,toyota,highlander,2006,limited,,public,3.3L V6,Gas V6,6,3.3,gasoline,230,5800,242,4400,3MZ-FE,5 speed AT,Automatic,four wheel drive,,AT,5
+system-stock,toyota,highlander,2006,limited,,public,3.3L V6 Hybrid,Gas/Electric V6,6,3.3,gasoline electric,208,5600,212,4400,3MZ-FE,CVT Automatic,Automatic,front wheel drive,,CVT,0
+system-stock,toyota,highlander,2006,limited,,public,3.3L V6 Hybrid,Gas/Electric V6,6,3.3,gasoline electric,208,5600,212,4400,3MZ-FE,CVT Automatic,Automatic,four wheel drive,,CVT,0

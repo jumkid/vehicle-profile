@@ -13,6 +13,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -57,7 +58,7 @@ public class ExceptionHandlingAdvice {
 
     @ExceptionHandler({ConstraintViolationException.class})
     @ResponseStatus(BAD_REQUEST)
-    public CustomErrorResponse handlerConstraintViolationException(ConstraintViolationException ex) {
+    public CustomErrorResponse handleConstraintViolationException(ConstraintViolationException ex) {
         log.warn("The provided argument is invalid.", ex);
         return CustomErrorResponse.builder()
                 .timestamp(Calendar.getInstance().getTime())
@@ -67,6 +68,14 @@ public class ExceptionHandlingAdvice {
                 .details(ex.getConstraintViolations().stream()
                         .map(ConstraintViolation::getMessage)
                         .collect(Collectors.toList()))
+                .build();
+    }
+
+    @ExceptionHandler({MultipartException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public CustomErrorResponse handleMultipartException(MultipartException ex) {
+        return CustomErrorResponse.builder()
+                .message("Upload failed due to: " + ex.getMessage())
                 .build();
     }
 
