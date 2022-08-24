@@ -1,6 +1,6 @@
 package com.jumkid.vehicle.service.handler;
 
-import com.jumkid.vehicle.enums.AccessScope;
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;

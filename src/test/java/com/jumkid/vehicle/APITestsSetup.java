@@ -1,6 +1,6 @@
 package com.jumkid.vehicle;
 
-import com.jumkid.vehicle.enums.AccessScope;
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.dto.VehicleEngine;
 import com.jumkid.vehicle.service.dto.VehicleTransmission;

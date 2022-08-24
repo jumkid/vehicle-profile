@@ -15,7 +15,7 @@
     <description>vehicle profile management spring boot application</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
 
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.24</org.projectlombok.version>

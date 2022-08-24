@@ -1,9 +1,9 @@
 package com.jumkid.vehicle.service;
 
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
-import com.jumkid.vehicle.enums.AccessScope;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;

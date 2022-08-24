@@ -1,8 +1,8 @@
 package com.jumkid.vehicle.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.share.service.dto.GenericDTO;
-import com.jumkid.vehicle.enums.AccessScope;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

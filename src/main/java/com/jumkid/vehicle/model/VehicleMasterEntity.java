@@ -1,6 +1,6 @@
 package com.jumkid.vehicle.model;
 
-import com.jumkid.vehicle.enums.AccessScope;
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.enums.VehicleEngineField;
 import com.jumkid.vehicle.enums.VehicleTransmissionField;
 import lombok.*;

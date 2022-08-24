@@ -1,6 +1,6 @@
 package com.jumkid.vehicle.config;
 
-import com.jumkid.vehicle.enums.AccessScope;
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.enums.VehicleField;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
