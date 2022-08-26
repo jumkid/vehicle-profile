@@ -8,6 +8,7 @@ import com.jumkid.vehicle.service.dto.Vehicle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,6 @@ public class VehicleController {
 
     private final VehicleMasterService vehicleMasterService;
 
-
     @Autowired
     public VehicleController(VehicleMasterService vehicleMasterService) {
         this.vehicleMasterService = vehicleMasterService;
@@ -43,6 +43,7 @@ public class VehicleController {
 
     @GetMapping(value = "/search")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE')")
     public PagingResponse<Vehicle> searchUserVehicle(@NotNull @Valid @RequestParam String keyword,
                                             @Min(1) @Valid @RequestParam Integer size,
                                             @Min(1) @Valid @RequestParam Integer page) {
@@ -61,19 +62,24 @@ public class VehicleController {
 
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('GUEST_ROLE', 'USER_ROLE', 'ADMIN_ROLE')")
+    @PostAuthorize("@vehicleAccessPermissionAuthorizer.isPublic(returnObject)" +
+            " || (hasAuthority('USER_ROLE') && @vehicleAccessPermissionAuthorizer.isOwner(returnObject))")
     public Vehicle getUserVehicle(@NotNull @Valid @PathVariable String id) {
         return vehicleMasterService.getUserVehicle(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE')")
     public Vehicle save(@NotNull @Valid @RequestBody Vehicle vehicle){
         return vehicleMasterService.saveUserVehicle(vehicle);
     }
 
     @PutMapping(value = "{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PreAuthorize("@vehicleAccessPermissionAuthorizer.isOwner(#id)")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')" +
+            " || (hasAuthority('USER_ROLE') && @vehicleAccessPermissionAuthorizer.isOwner(#id))")
     public Vehicle update(@NotNull @Valid @PathVariable String id,
                         @NotNull @RequestBody Vehicle partialVehicle){
         return vehicleMasterService.updateUserVehicle(id, partialVehicle);
@@ -81,7 +87,8 @@ public class VehicleController {
 
     @DeleteMapping(value = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@vehicleAccessPermissionAuthorizer.isOwner(#id)")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')" +
+            " || (hasAuthority('USER_ROLE') && @vehicleAccessPermissionAuthorizer.isOwner(#id))")
     public CommonResponse deleteUserVehicle(@PathVariable String id) {
         vehicleMasterService.deleteUserVehicle(id);
         return CommonResponse.builder().success(true).data(String.valueOf(id)).build();
@@ -89,6 +96,7 @@ public class VehicleController {
 
     @PostMapping(value = "import")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public CommonResponse importUserVehicles(@NotNull @RequestParam("file") MultipartFile file) {
         try {
             Integer count = vehicleMasterService.importVehicleMaster(file.getInputStream());

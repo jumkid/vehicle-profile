@@ -17,22 +17,27 @@ public class VehicleAccessPermissionAuthorizer {
 
     private final VehicleMasterRepository vehicleMasterRepository;
 
-    public VehicleAccessPermissionAuthorizer(UserProfileManager userProfileManager, VehicleMasterRepository vehicleMasterRepository) {
+    public VehicleAccessPermissionAuthorizer(UserProfileManager userProfileManager,
+                                             VehicleMasterRepository vehicleMasterRepository) {
         this.userProfileManager = userProfileManager;
         this.vehicleMasterRepository = vehicleMasterRepository;
     }
 
-    public boolean hasViewPermission(Vehicle vehicle) {
-        return vehicle.getAccessScope().equals(AccessScope.PUBLIC) || checkUserId(vehicle.getCreatedBy());
+    public boolean isPublic(Vehicle vehicle) {
+        return vehicle.getAccessScope().equals(AccessScope.PUBLIC);
     }
 
     public boolean isOwner(String vehicleId) {
         VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
-        return checkUserId(entity.getCreatedBy());
+        return isCurrentUserOwned(entity.getCreatedBy());
     }
 
-    private boolean checkUserId(String userId) {
+    public boolean isOwner(Vehicle vehicle) {
+        return isCurrentUserOwned(vehicle.getCreatedBy());
+    }
+
+    private boolean isCurrentUserOwned(String userId) {
         return this.getUserProfile().getId().equals(userId);
     }
 

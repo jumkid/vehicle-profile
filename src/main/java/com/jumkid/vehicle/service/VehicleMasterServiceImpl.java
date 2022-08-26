@@ -82,7 +82,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
             if (!searchResult.getResultSet().isEmpty()) {
                 List<Vehicle> results = searchResult.getResultSet().stream()
                         .map(vehicleSearch -> this.getUserVehicle(vehicleSearch.getId()))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 pagingResults.setTotal(searchResult.getTotal());
                 pagingResults.setResultSet(results);
@@ -102,7 +102,6 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
-    @PostAuthorize("@vehicleAccessPermissionAuthorizer.hasViewPermission(returnObject)")
     public Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException {
         VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });

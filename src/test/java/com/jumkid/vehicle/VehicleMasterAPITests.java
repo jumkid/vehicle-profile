@@ -73,7 +73,7 @@ public class VehicleMasterAPITests {
     }
 
     @Test
-    @WithMockUser(username="test", password="test", authorities="user")
+    @WithMockUser(username="test", password="test", authorities="USER_ROLE")
     public void whenGivenVehicle_shouldSaveVehicleEntity() throws Exception{
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,6 +87,7 @@ public class VehicleMasterAPITests {
     }
 
     @Test
+    @WithMockUser(username="test", password="test", authorities="USER_ROLE")
     public void whenGivenNull_shouldGetBadRequest() throws Exception{
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,6 +96,7 @@ public class VehicleMasterAPITests {
     }
 
     @Test
+    @WithMockUser(username="test", password="test", authorities="USER_ROLE")
     public void whenGivenNullProperties_shouldGetBadRequest() throws Exception{
         Vehicle vehicleWithNullProperties = Vehicle.builder().build();
         mockMvc.perform(post("/vehicles")
@@ -105,7 +107,7 @@ public class VehicleMasterAPITests {
     }
 
     @Test
-    @WithMockUser(username="test", password="test", authorities="user")
+    @WithMockUser(username="test", password="test", authorities="USER_ROLE")
     public void whenGivenVehicleWithId_shouldUpdateVehicleEntity() throws Exception{
         Vehicle updateVehicle = Vehicle.builder()
                 .id(vehicle.getId())
@@ -133,7 +135,7 @@ public class VehicleMasterAPITests {
     }
 
     @Test
-    @WithMockUser(username="test", password="test", authorities="user")
+    @WithMockUser(username="test", password="test", authorities="USER_ROLE")
     public void whenGivenVehicleId_shouldDeleteVehicleEntity() throws Exception {
         when(vehicleMasterRepository.findById(vehicle.getId())).thenReturn(Optional.of(entity));
 
@@ -143,7 +145,7 @@ public class VehicleMasterAPITests {
     }
 
     @Test
-    @WithMockUser(username="test", password="test", authorities="user")
+    @WithMockUser(username="test", password="test", authorities="USER_ROLE")
     public void whenGivenKeywordAndSizeSearch_shouldGetSearchResult() throws Exception {
         String keyword = "keyword";
         Integer size = 10;
