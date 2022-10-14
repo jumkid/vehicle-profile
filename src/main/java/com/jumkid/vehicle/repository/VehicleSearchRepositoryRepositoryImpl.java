@@ -92,7 +92,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
     }
 
     @Override
-    public Integer saveAll(List<VehicleSearch> vehicleSearchList) throws VehicleImportException{
+    public Integer saveAll(List<? extends VehicleSearch> vehicleSearchList) throws VehicleImportException{
         try {
             BulkRequest.Builder reqBuilder = new BulkRequest.Builder();
 

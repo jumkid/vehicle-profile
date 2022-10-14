@@ -49,9 +49,10 @@ public class VehicleAdminController {
     @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public CommonResponse reindexAllVehicles() {
         try {
-            vehicleProfileReindexBatchService.runJob();
+            int count = vehicleProfileReindexBatchService.runJob();
             return CommonResponse.builder()
                     .success(true)
+                    .data(count)
                     .build();
         } catch (BatchProcessException bpe) {
             return CommonResponse.builder()

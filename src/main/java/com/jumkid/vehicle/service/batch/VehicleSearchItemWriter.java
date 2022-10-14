@@ -16,7 +16,7 @@ public class VehicleSearchItemWriter implements ItemWriter<VehicleSearch> {
     }
 
     @Override
-    public void write(@NonNull List vehicleSearchList) throws Exception {
+    public void write(@NonNull List<? extends VehicleSearch> vehicleSearchList) throws Exception {
         vehicleSearchRepository.saveAll(vehicleSearchList);
     }
 

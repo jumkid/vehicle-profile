@@ -13,7 +13,7 @@ public interface VehicleSearchRepository {
 
     VehicleSearch save(VehicleSearch vehicleSearch);
 
-    Integer saveAll(List<VehicleSearch> vehicleSearchList) throws VehicleImportException;
+    Integer saveAll(List<? extends VehicleSearch> vehicleSearchList) throws VehicleImportException;
 
     Integer update(String vehicleId, VehicleSearch partialVehicleSearch);
 

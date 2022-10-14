@@ -4,10 +4,7 @@ import com.jumkid.vehicle.exception.BatchProcessException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.model.VehicleSearch;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -16,6 +13,8 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Slf4j
 @Service(value = "vehicleProfileReindexBatchService")
@@ -28,7 +27,7 @@ public class VehicleProfileReindexBatchServiceImpl implements OnDemandBatchServi
 
     private final RepositoryItemReader<VehicleMasterEntity> reader;
     private final ItemWriter<VehicleSearch> writer;
-    private final ItemProcessor processor;
+    private final ItemProcessor<VehicleMasterEntity, VehicleSearch> processor;
 
     public VehicleProfileReindexBatchServiceImpl(JobBuilderFactory jobBuilderFactory,
                                                  JobLauncher jobLauncher,
@@ -36,7 +35,7 @@ public class VehicleProfileReindexBatchServiceImpl implements OnDemandBatchServi
                                                  StepBuilderFactory stepBuilderFactory,
                                                  RepositoryItemReader<VehicleMasterEntity> reader,
                                                  ItemWriter<VehicleSearch> writer,
-                                                 ItemProcessor processor) {
+                                                 ItemProcessor<VehicleMasterEntity, VehicleSearch> processor) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.jobLauncher = jobLauncher;
         this.jobCompletionNotificationListener = jobCompletionNotificationListener;
@@ -47,22 +46,35 @@ public class VehicleProfileReindexBatchServiceImpl implements OnDemandBatchServi
     }
 
     @Override
-    public void runJob() throws BatchProcessException {
+    public int runJob() throws BatchProcessException {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("startAt", System.currentTimeMillis())
                 .toJobParameters();
+
+        ItemCountListener countListener = new ItemCountListener();
+
         try {
             Step step = this.stepBuilderFactory.get("vehicle-profile-reindex-step")
-                    .chunk(3)
+                    .<VehicleMasterEntity, VehicleSearch>chunk(500)
                     .processor(processor)
                     .reader(reader)
                     .writer(writer)
+                    .listener(countListener)
                     .build();
 
-            jobLauncher.run(createJob(jobCompletionNotificationListener, step), jobParameters);
+            JobExecution jobExecution = jobLauncher.run(createJob(jobCompletionNotificationListener, step), jobParameters);
+            Date start = jobExecution.getCreateTime();
+            Date end = jobExecution.getEndTime();
+            long timeSpent = (end != null) ? end.getTime() - start.getTime() : -1L;
+            int total = countListener.getCounter();
+            log.info("Vehicle Profile Reindex : total {} items,  start time [{}], end time [{}], time spent [{}]",
+                    total, start, end, timeSpent);
+
+            return total;
         } catch (Exception e) {
             e.printStackTrace();
             log.error("failed to run batch job {}", e.getMessage());
+            throw new BatchProcessException(e.getMessage());
         }
     }
 

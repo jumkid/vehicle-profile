@@ -42,7 +42,7 @@ public class VehicleProfileReindexBatch {
 
         reader.setRepository(vehicleMasterRepository);
         reader.setMethodName("findAll");
-        reader.setPageSize(100);
+        reader.setPageSize(1000);
 
         Map<String, Sort.Direction> sorts = new HashMap<>();
         sorts.put("id", Sort.Direction.ASC);

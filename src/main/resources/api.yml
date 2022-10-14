@@ -180,6 +180,13 @@ paths:
       responses:
         '200':
           description: reindex vehicle data
+      '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
 
 components:
   schemas:
