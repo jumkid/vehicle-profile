@@ -17,7 +17,6 @@ import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -118,7 +116,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
 
         entity = vehicleMasterRepository.save(entity);
-        log.info("new user vehicle data saved with id {}", entity.getVehicleId());
+        log.info("new user vehicle data saved with id {}", entity.getId());
 
         vehicleSearchRepository.save(vehicleSearchMapper.entityToSearchMeta(entity));
 

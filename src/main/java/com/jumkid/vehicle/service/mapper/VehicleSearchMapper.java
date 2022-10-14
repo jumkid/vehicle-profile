@@ -15,7 +15,7 @@ public interface VehicleSearchMapper {
 
     @Mapping(target="vehicleEngine", source="entity.vehicleEngineEntity")
     @Mapping(target="vehicleTransmission", source="entity.vehicleTransmissionEntity")
-    @Mapping(target="id", source = "entity.vehicleId")
+    @Mapping(target="id", source = "entity.id")
     VehicleSearch entityToSearchMeta(VehicleMasterEntity entity);
 
     @Mapping(target="vehicleEngine", source="dto.vehicleEngine")

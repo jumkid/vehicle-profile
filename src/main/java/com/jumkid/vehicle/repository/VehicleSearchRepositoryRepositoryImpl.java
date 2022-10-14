@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -56,7 +55,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
             final long total = response.hits().total().value();
             log.info("found total {} vehicle profiles for keyword search", response.hits().total().value());
 
-            List<VehicleSearch> results = response.hits().hits().stream().map(Hit::source).collect(Collectors.toList());
+            List<VehicleSearch> results = response.hits().hits().stream().map(Hit::source).toList();
 
             return PagingResults.<VehicleSearch>builder()
                     .total(total)
@@ -108,7 +107,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
             if (result.errors()) {
                 throw new VehicleImportException(result.items().stream()
                         .map(item -> item.error() != null ? item.error().reason() : null)
-                        .collect(Collectors.toList()));
+                        .toList());
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();

@@ -168,6 +168,19 @@ paths:
             application/json:
               schema:
                 type: integer
+
+  /vehicles/reindex:
+    get:
+      tags:
+        - v1
+      operationId: reindex
+      description: reindex vehicle data
+      security:
+        - Authorization: [ ]
+      responses:
+        '200':
+          description: reindex vehicle data
+
 components:
   schemas:
     Vehicle:

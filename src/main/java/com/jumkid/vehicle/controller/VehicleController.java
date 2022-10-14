@@ -12,12 +12,10 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -92,23 +90,6 @@ public class VehicleController {
     public CommonResponse deleteUserVehicle(@PathVariable String id) {
         vehicleMasterService.deleteUserVehicle(id);
         return CommonResponse.builder().success(true).data(String.valueOf(id)).build();
-    }
-
-    @PostMapping(value = "import")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
-    public CommonResponse importUserVehicles(@NotNull @RequestParam("file") MultipartFile file) {
-        try {
-            Integer count = vehicleMasterService.importVehicleMaster(file.getInputStream());
-            return CommonResponse.builder()
-                    .success(true).msg(count.toString())
-                    .build();
-        } catch (IOException ioe) {
-            log.error("Not able to load data from csv: {}", ioe.getMessage());
-            return CommonResponse.builder()
-                    .success(false).msg("Failed to import vehicle data from csv")
-                    .build();
-        }
     }
 
 }

@@ -24,7 +24,7 @@ public class VehicleMasterEntity {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = VehicleField.Fields.VEHICLE_ID, updatable = false, nullable = false)
-    private String vehicleId;
+    private String id;
 
     @Column(name = VehicleField.Fields.NAME)
     private String name;
