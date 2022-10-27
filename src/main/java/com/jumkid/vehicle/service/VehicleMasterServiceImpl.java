@@ -1,5 +1,6 @@
 package com.jumkid.vehicle.service;
 
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
 import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.share.user.UserProfile;
@@ -12,6 +13,7 @@ import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.handler.DTOHandler;
+import com.jumkid.vehicle.service.handler.SmartKeywordHandler;
 import com.jumkid.vehicle.service.handler.VehicleMasterImportHandler;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
@@ -37,6 +39,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     private final VehicleMasterImportHandler vehicleMasterImportHandler;
     private final DTOHandler dtoHandler;
+    private final SmartKeywordHandler smartKeywordHandler;
 
     private final VehicleMapper vehicleMapper;
     private final VehicleSearchMapper vehicleSearchMapper;
@@ -46,13 +49,14 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
                                     VehicleSearchRepository vehicleSearchRepository,
                                     UserProfileManager userProfileManager,
                                     VehicleMasterImportHandler vehicleMasterImportHandler,
-                                    DTOHandler dtoHandler, VehicleMapper vehicleMapper,
+                                    DTOHandler dtoHandler, SmartKeywordHandler smartKeywordHandler, VehicleMapper vehicleMapper,
                                     VehicleSearchMapper vehicleSearchMapper) {
         this.vehicleMasterRepository = vehicleMasterRepository;
         this.vehicleSearchRepository = vehicleSearchRepository;
         this.userProfileManager = userProfileManager;
         this.vehicleMasterImportHandler = vehicleMasterImportHandler;
         this.dtoHandler = dtoHandler;
+        this.smartKeywordHandler = smartKeywordHandler;
         this.vehicleMapper = vehicleMapper;
         this.vehicleSearchMapper = vehicleSearchMapper;
     }
@@ -68,14 +72,35 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
-    public PagingResults<Vehicle> searchUserVehicles(String keyword, Integer size, Integer page) throws VehicleSearchException{
+    public PagingResults<Vehicle> searchUserVehicles(final String keyword, final Integer size, final Integer page)
+            throws VehicleSearchException{
         String userId = getCurrentUserId();
+        return searchByCriteria(keyword, size, page, (String k, Integer s, Integer p) ->
+                vehicleSearchRepository.searchByUser(smartKeywordHandler.andSplit(k), s, p, userId)
+        );
+    }
+
+    @Override
+    public PagingResults<Vehicle> searchPublicVehicles(final String keyword, final Integer size, final Integer page)
+            throws VehicleSearchException {
+        return searchByCriteria(keyword, size, page, (String k, Integer s, Integer p) ->
+                vehicleSearchRepository
+                        .searchByAccessScope(smartKeywordHandler.andSplit(k), s, p, AccessScope.PUBLIC)
+        );
+    }
+
+    @Override
+    public PagingResults<Vehicle> searchByCriteria(final String keyword,
+                                                   final Integer size,
+                                                   final Integer page,
+                                                   final SearchByCriteria searchFunction) {
         PagingResults<Vehicle> pagingResults = PagingResults.<Vehicle>builder()
-                                                        .page(page)
-                                                        .size(size)
-                                                        .build();
+                .page(page)
+                .size(size)
+                .build();
+
         try {
-            PagingResults<VehicleSearch> searchResult = vehicleSearchRepository.search(keyword, size, page, userId);
+            PagingResults<VehicleSearch> searchResult = searchFunction.search(keyword, size, page);
 
             if (!searchResult.getResultSet().isEmpty()) {
                 List<Vehicle> results = searchResult.getResultSet().stream()
@@ -91,12 +116,10 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
             }
             return pagingResults;
-
         } catch (Exception e) {
             e.printStackTrace();
             throw new VehicleSearchException(e.getMessage());
         }
-
     }
 
     @Override

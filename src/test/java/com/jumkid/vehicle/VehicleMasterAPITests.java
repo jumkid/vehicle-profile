@@ -1,6 +1,7 @@
 package com.jumkid.vehicle;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.model.VehicleSearch;
@@ -159,12 +160,26 @@ public class VehicleMasterAPITests {
                 .resultSet(vehicleSearchMapper.dtoListToSearches(vehicleList))
                 .build();
 
-        when(vehicleSearchRepository.search(keyword, size, page, "test")).thenReturn(pagingResults);
+        when(vehicleSearchRepository.searchByUser(keyword, size, page, "test")).thenReturn(pagingResults);
+        when(vehicleSearchRepository.searchByAccessScope(keyword, size, page, AccessScope.PUBLIC)).thenReturn(pagingResults);
+
         for (Vehicle vehicle : vehicleList) {
             when(vehicleMasterRepository.findById(vehicle.getId())).thenReturn(Optional.of(vehicleMapper.dtoToEntity(vehicle)));
         }
 
         mockMvc.perform(get("/vehicles/search")
+                .param("keyword", keyword)
+                .param("size", size.toString())
+                .param("page", page.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(Boolean.TRUE))
+                .andExpect(jsonPath("$.total").value(10))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.page").value(1))
+                .andExpect(jsonPath("$.data", hasSize(10)));
+
+        mockMvc.perform(get("/vehicles/search-public")
                 .param("keyword", keyword)
                 .param("size", size.toString())
                 .param("page", page.toString())

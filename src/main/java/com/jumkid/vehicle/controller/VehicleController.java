@@ -39,25 +39,6 @@ public class VehicleController {
         return vehicleMasterService.getUserVehicles();
     }
 
-    @GetMapping(value = "/search")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE')")
-    public PagingResponse<Vehicle> searchUserVehicle(@NotNull @Valid @RequestParam String keyword,
-                                            @Min(1) @Valid @RequestParam Integer size,
-                                            @Min(1) @Valid @RequestParam Integer page) {
-        log.info("search user vehicle by keyword {}, size {}", keyword, size);
-
-        PagingResults<Vehicle> results = vehicleMasterService.searchUserVehicles(keyword, size, page);
-
-        return PagingResponse.<Vehicle>builder()
-                .success(true)
-                .total(results.getTotal())
-                .page(results.getPage())
-                .size(results.getSize())
-                .data(results.getResultSet())
-                .build();
-    }
-
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('GUEST_ROLE', 'USER_ROLE', 'ADMIN_ROLE')")

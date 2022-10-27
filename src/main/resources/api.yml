@@ -52,6 +52,7 @@ paths:
           $ref: '#/components/responses/201-created'
         '403':
           $ref: '#/components/responses/403-access-deny'
+
   '/vehicles/search':
     get:
       tags:
@@ -83,6 +84,39 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200-vehicles'
+
+  '/vehicles/search-public':
+    get:
+      tags:
+        - v1
+        - test
+      operationId: searchPublicVehicle
+      description: search public vehicle profiles with keyword
+      security:
+        - Authorization: []
+      parameters:
+        - name: keyword
+          description: search keyword
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          description: search result size
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: page
+          description: page number of search result
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200-vehicles'        
+
   '/vehicles/{id}':
     get:
       tags:

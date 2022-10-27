@@ -5,6 +5,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.jumkid.share.security.AccessScope;
 import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.exception.VehicleImportException;
@@ -30,13 +31,26 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
     }
 
     @Override
-    public PagingResults<VehicleSearch> search(String keyword, Integer size, Integer page, String userId) {
-        // Search by user id
+    public PagingResults<VehicleSearch> searchByUser(String keyword, Integer size, Integer page, String userId) {
         Query byUser = MatchQuery.of(m -> m
                 .field(VehicleField.CREATEDBY.value())
                 .query(userId)
         )._toQuery();
 
+        return searchWithKeywordAndFilter(keyword, byUser, size, page);
+    }
+
+    @Override
+    public PagingResults<VehicleSearch> searchByAccessScope(String keyword, Integer size, Integer page, AccessScope accessScope) throws VehicleSearchException {
+        Query byAccessScope = MatchQuery.of(m -> m
+                .field(VehicleField.ACCESSSCOPE.value())
+                .query(accessScope.value())
+        )._toQuery();
+
+        return searchWithKeywordAndFilter(keyword, byAccessScope, size, page);
+    }
+
+    private PagingResults<VehicleSearch> searchWithKeywordAndFilter(String keyword, Query queryFilter, Integer size, Integer page) throws VehicleSearchException {
         final int _size = ( size == null ) ? 20 : size;
         final int _page = ( page == null ) ? 0 : page;
         Integer from = _size * (_page - 1);
@@ -47,7 +61,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
                             .size(_size)
                             .from(from)
                             .q(keyword)
-                            .postFilter(byUser)
+                            .postFilter(queryFilter)
                             .fields(f -> f.field(VehicleField.ID.value())),
                     VehicleSearch.class);
 

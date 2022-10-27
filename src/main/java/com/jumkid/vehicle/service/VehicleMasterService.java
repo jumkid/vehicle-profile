@@ -15,6 +15,14 @@ public interface VehicleMasterService {
 
     PagingResults<Vehicle> searchUserVehicles(String keyword, Integer size, Integer page) throws VehicleSearchException;
 
+    PagingResults<Vehicle> searchPublicVehicles(final String keyword, final Integer size, final Integer page)
+            throws VehicleSearchException;
+
+    PagingResults<Vehicle> searchByCriteria(final String keyword,
+                                                   final Integer size,
+                                                   final Integer page,
+                                                   final SearchByCriteria searchFunction) throws VehicleSearchException;
+
     Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException;
 
     Vehicle saveUserVehicle(Vehicle vehicle);
