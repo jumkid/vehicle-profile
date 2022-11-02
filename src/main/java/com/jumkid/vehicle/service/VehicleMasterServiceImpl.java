@@ -66,7 +66,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         String userId = getCurrentUserId();
 
         List<VehicleMasterEntity> vehicleMasterEntities = vehicleMasterRepository.findByCreatedBy(userId);
-        log.info("Found {} vehicles for user {}", vehicleMasterEntities.size(), userId);
+        log.debug("Found {} vehicles for user {}", vehicleMasterEntities.size(), userId);
 
         return vehicleMapper.entitiesToDTOs(vehicleMasterEntities);
     }
@@ -126,7 +126,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     public Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException {
         VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
-        log.info("Found vehicle with id {} records for user", vehicleId);
+        log.debug("Found vehicle with id {} records for user", vehicleId);
 
         return vehicleMapper.entityToDto(entity);
     }
@@ -137,6 +137,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         dtoHandler.normalizeDTO(null, vehicle, null);
 
         VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
+        entity.setId(null);
 
         entity = vehicleMasterRepository.save(entity);
         log.info("new user vehicle data saved with id {}", entity.getId());

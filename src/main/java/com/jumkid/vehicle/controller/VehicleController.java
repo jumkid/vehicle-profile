@@ -1,8 +1,6 @@
 package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.CommonResponse;
-import com.jumkid.share.controller.response.PagingResponse;
-import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.vehicle.service.VehicleMasterService;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -34,7 +31,7 @@ public class VehicleController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<Vehicle> getUserVehicles() {
-        log.info("fetch all user vehicles");
+        log.debug("fetch all user vehicles");
 
         return vehicleMasterService.getUserVehicles();
     }

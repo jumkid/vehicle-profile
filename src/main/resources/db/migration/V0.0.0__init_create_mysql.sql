@@ -35,9 +35,9 @@ CREATE TABLE vehicle_master (
     media_gallery_id VARCHAR(100),
 
     created_by VARCHAR(255),
-    creation_date DATETIME,
+    creation_date DATETIME(3),
     modified_by VARCHAR(255),
-    modification_date DATETIME,
+    modification_date DATETIME(3),
     FOREIGN KEY (vehicle_engine_id) REFERENCES vehicle_engine(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_transmission_id) REFERENCES vehicle_transmission(id) ON DELETE CASCADE
 )

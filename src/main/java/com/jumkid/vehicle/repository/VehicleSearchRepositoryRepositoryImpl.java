@@ -1,6 +1,9 @@
 package com.jumkid.vehicle.repository;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.FieldSort;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.*;
@@ -50,10 +53,17 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
         return searchWithKeywordAndFilter(keyword, byAccessScope, size, page);
     }
 
-    private PagingResults<VehicleSearch> searchWithKeywordAndFilter(String keyword, Query queryFilter, Integer size, Integer page) throws VehicleSearchException {
+    private PagingResults<VehicleSearch> searchWithKeywordAndFilter(String keyword,
+                                                                    Query queryFilter,
+                                                                    Integer size,
+                                                                    Integer page) throws VehicleSearchException {
         final int _size = ( size == null ) ? 20 : size;
         final int _page = ( page == null ) ? 0 : page;
         Integer from = _size * (_page - 1);
+
+        //sort by model year
+        final SortOptions modelYearSorter = SortOptions.of(soBuilder -> soBuilder.field(
+                FieldSort.of(fs->fs.field(VehicleField.MODELYEAR.value()).order(SortOrder.Desc))));
 
         try {
             SearchResponse<VehicleSearch> response = esClient.search(builder -> builder
@@ -61,6 +71,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
                             .size(_size)
                             .from(from)
                             .q(keyword)
+                            .sort(modelYearSorter)
                             .postFilter(queryFilter)
                             .fields(f -> f.field(VehicleField.ID.value())),
                     VehicleSearch.class);
