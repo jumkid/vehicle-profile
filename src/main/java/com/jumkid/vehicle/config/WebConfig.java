@@ -2,10 +2,13 @@ package com.jumkid.vehicle.config;
 
 import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.enums.VehicleField;
+import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

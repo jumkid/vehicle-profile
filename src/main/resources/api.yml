@@ -116,6 +116,41 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200-vehicles'        
+ 
+  '/vehicle/search-aggregation':
+    get:
+      tags:
+        - v1
+        - test
+      operationId: searchForAggregation
+      description: aggregation search for certain field 
+      security:
+        - Authorization: []
+      parameters:
+        - name: field
+          description: field name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: matchFields
+          description: match fields name and value map
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+                  $ref: '#/components/schemas/VehicleFieldValuePair'
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  schema:
+                    type: string
 
   '/vehicles/{id}':
     get:
@@ -169,13 +204,9 @@ paths:
         '204':
           description: NOT_FOUND
         '403':
-          description: FORBIDDEN
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
-  /vehicles/import:
+          $ref: '#/components/responses/403-access-deny'
+          
+  '/vehicles/import':
     post:
       tags:
         - v1
@@ -203,7 +234,7 @@ paths:
               schema:
                 type: integer
 
-  /vehicles/reindex:
+  '/vehicles/reindex':
     get:
       tags:
         - v1
@@ -214,13 +245,12 @@ paths:
       responses:
         '200':
           description: reindex vehicle data
-      '403':
+        '403': 
           description: FORBIDDEN
           content:
             application/json:
               schema:
-                items:
-                  $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
+                $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
 
 components:
   schemas:
@@ -294,6 +324,14 @@ components:
       enum:
         - public
         - private
+    VehicleFieldValuePair:
+      description: key value pair for vehicle field
+      properties:
+        field: 
+          type: string
+        value:
+          type: string | number
+
   responses:
     200-vehicle:
       description: OK

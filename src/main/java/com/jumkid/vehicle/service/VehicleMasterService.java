@@ -1,9 +1,11 @@
 package com.jumkid.vehicle.service;
 
 import com.jumkid.share.service.dto.PagingResults;
+import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.service.dto.Vehicle;
+import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +15,8 @@ public interface VehicleMasterService {
 
     List<Vehicle> getUserVehicles();
 
-    PagingResults<Vehicle> searchUserVehicles(String keyword, Integer size, Integer page) throws VehicleSearchException;
+    PagingResults<Vehicle> searchUserVehicles(final String keyword, final Integer size, final Integer page)
+            throws VehicleSearchException;
 
     PagingResults<Vehicle> searchPublicVehicles(final String keyword, final Integer size, final Integer page)
             throws VehicleSearchException;
@@ -22,6 +25,9 @@ public interface VehicleMasterService {
                                                    final Integer size,
                                                    final Integer page,
                                                    final SearchByCriteria searchFunction) throws VehicleSearchException;
+
+    List<String> searchForAggregation(final VehicleField field, final List<VehicleFieldValuePair<String>> matchFields)
+            throws VehicleSearchException;
 
     Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException;
 

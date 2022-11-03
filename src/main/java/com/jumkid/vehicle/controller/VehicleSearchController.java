@@ -2,20 +2,26 @@ package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.PagingResponse;
 import com.jumkid.share.service.dto.PagingResults;
+import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.service.VehicleMasterService;
 import com.jumkid.vehicle.service.dto.Vehicle;
+import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/vehicles")
+@Validated
 public class VehicleSearchController {
 
     private final VehicleMasterService vehicleMasterService;
@@ -61,5 +67,15 @@ public class VehicleSearchController {
                 .size(results.getSize())
                 .data(results.getResultSet())
                 .build();
+    }
+
+    @GetMapping(value = "/search-aggregation", consumes = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('GUEST_ROLE', 'USER_ROLE', 'ADMIN_ROLE')")
+    public List<String> searchForAggregation(@NotNull @Valid @RequestParam VehicleField field,
+                                       @RequestBody(required = false) List<@Valid VehicleFieldValuePair<String>> matchFields) {
+        log.debug("search aggregation for field {}, match fields {}", field, matchFields);
+        if (matchFields == null) matchFields = Collections.emptyList();
+        return vehicleMasterService.searchForAggregation(field, matchFields);
     }
 }

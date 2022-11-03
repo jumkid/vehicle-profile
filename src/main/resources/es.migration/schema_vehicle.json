@@ -5,10 +5,10 @@
         "type": "text"
       },
       "make": {
-        "type": "text"
+        "type": "keyword"
       },
       "model": {
-        "type": "text"
+        "type": "keyword"
       },
       "modelYear": {
         "type": "integer",
@@ -18,7 +18,7 @@
         "type": "keyword"
       },
       "trimLevel": {
-        "type": "text"
+        "type": "keyword"
       },
       "vehicleEngine": {
         "properties": {

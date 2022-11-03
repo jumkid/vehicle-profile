@@ -5,6 +5,7 @@ import com.jumkid.share.security.exception.UserProfileNotFoundException;
 import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
+import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
@@ -12,6 +13,7 @@ import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
+import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 import com.jumkid.vehicle.service.handler.DTOHandler;
 import com.jumkid.vehicle.service.handler.SmartKeywordHandler;
 import com.jumkid.vehicle.service.handler.VehicleMasterImportHandler;
@@ -120,6 +122,12 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
             e.printStackTrace();
             throw new VehicleSearchException(e.getMessage());
         }
+    }
+
+    @Override
+    public List<String> searchForAggregation(VehicleField field, List<VehicleFieldValuePair<String>> matchFields)
+            throws VehicleSearchException {
+        return vehicleSearchRepository.searchForAggregation(field, matchFields);
     }
 
     @Override

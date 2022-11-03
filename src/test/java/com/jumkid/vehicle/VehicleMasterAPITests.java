@@ -3,11 +3,13 @@ package com.jumkid.vehicle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumkid.share.security.AccessScope;
 import com.jumkid.share.service.dto.PagingResults;
+import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
+import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import org.junit.Assert;
@@ -23,6 +25,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -190,7 +193,37 @@ public class VehicleMasterAPITests {
                 .andExpect(jsonPath("$.size").value(10))
                 .andExpect(jsonPath("$.page").value(1))
                 .andExpect(jsonPath("$.data", hasSize(10)));
-
     }
 
+    @Test
+    @WithMockUser(username="test", password="test", authorities="USER_ROLE")
+    public void whenGivenFieldsSearchAggregation_shouldGetSearchResult() throws Exception {
+        VehicleField field = VehicleField.MAKE;
+        List<VehicleFieldValuePair<String>> emptyPairs = Collections.emptyList();
+        List<VehicleFieldValuePair<String>> fieldValuePairsPairs =
+                List.of(new VehicleFieldValuePair<String>(VehicleField.MAKE, "value"));
+        List<String> resultKeys = List.of("key 1", "key 2");
+
+        when(vehicleSearchRepository.searchForAggregation(field, emptyPairs)).thenReturn(resultKeys);
+        when(vehicleSearchRepository.searchForAggregation(field, fieldValuePairsPairs)).thenReturn(resultKeys);
+
+        mockMvc.perform(get("/vehicles/search-aggregation")
+                .param("field", field.value())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/vehicles/search-aggregation")
+                .param("field", field.value())
+                .content(new ObjectMapper().writeValueAsBytes(fieldValuePairsPairs))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username="test", password="test", authorities="USER_ROLE")
+    public void whenMissFieldsSearchAggregation_shouldGetError() throws Exception {
+        mockMvc.perform(get("/vehicles/search-aggregation")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
