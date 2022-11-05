@@ -96,28 +96,9 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
                                                    final Integer size,
                                                    final Integer page,
                                                    final SearchByCriteria searchFunction) {
-        PagingResults<Vehicle> pagingResults = PagingResults.<Vehicle>builder()
-                .page(page)
-                .size(size)
-                .build();
-
         try {
             PagingResults<VehicleSearch> searchResult = searchFunction.search(keyword, size, page);
-
-            if (!searchResult.getResultSet().isEmpty()) {
-                List<Vehicle> results = searchResult.getResultSet().stream()
-                        .map(vehicleSearch -> this.getUserVehicle(vehicleSearch.getId()))
-                        .toList();
-
-                pagingResults.setTotal(searchResult.getTotal());
-                pagingResults.setResultSet(results);
-
-            } else {
-                pagingResults.setTotal(0L);
-                pagingResults.setResultSet(Collections.emptyList());
-
-            }
-            return pagingResults;
+            return buildPagingResults(size, page, searchResult);
         } catch (Exception e) {
             e.printStackTrace();
             throw new VehicleSearchException(e.getMessage());
@@ -125,9 +106,40 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
-    public List<String> searchForAggregation(VehicleField field, List<VehicleFieldValuePair<String>> matchFields)
+    public PagingResults<Vehicle> searchByMatchFields(Integer size, Integer page,
+                                                      List<VehicleFieldValuePair<String>> matchFields)
             throws VehicleSearchException {
-        return vehicleSearchRepository.searchForAggregation(field, matchFields);
+        PagingResults<VehicleSearch> searchResult = vehicleSearchRepository.searchByMatchFields(size, page, matchFields, AccessScope.PUBLIC);
+        return buildPagingResults(size, page, searchResult);
+    }
+
+    @Override
+    public List<String> searchForAggregation(VehicleField field, List<VehicleFieldValuePair<String>> matchFields, Integer size)
+            throws VehicleSearchException {
+        return vehicleSearchRepository.searchForAggregation(field, matchFields, size);
+    }
+
+    private PagingResults<Vehicle> buildPagingResults(Integer size, Integer page,
+                                                      PagingResults<VehicleSearch> searchResult) {
+        PagingResults<Vehicle> pagingResults = PagingResults.<Vehicle>builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        if (!searchResult.getResultSet().isEmpty()) {
+            List<Vehicle> results = searchResult.getResultSet().stream()
+                    .map(vehicleSearch -> this.getUserVehicle(vehicleSearch.getId()))
+                    .toList();
+
+            pagingResults.setTotal(searchResult.getTotal());
+            pagingResults.setResultSet(results);
+
+        } else {
+            pagingResults.setTotal(0L);
+            pagingResults.setResultSet(Collections.emptyList());
+
+        }
+        return pagingResults;
     }
 
     @Override

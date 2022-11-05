@@ -28,6 +28,7 @@ import java.util.*;
 public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepository {
 
     private static final String ES_IDX_ENDPOINT = "vehicle";
+    private static final String AGG_NAME = "vehicle-agg";
 
     private final ElasticsearchClient esClient;
 
@@ -46,7 +47,8 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
     }
 
     @Override
-    public PagingResults<VehicleSearch> searchByAccessScope(String keyword, Integer size, Integer page, AccessScope accessScope) throws VehicleSearchException {
+    public PagingResults<VehicleSearch> searchByAccessScope(String keyword, Integer size, Integer page,
+                                                            AccessScope accessScope) throws VehicleSearchException {
         Query byAccessScope = MatchQuery.of(m -> m
                 .field(VehicleField.ACCESSSCOPE.value())
                 .query(accessScope.value())
@@ -56,30 +58,45 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
     }
 
     @Override
-    public List<String> searchForAggregation(VehicleField field, List<VehicleFieldValuePair<String>> matchFields)
-            throws VehicleSearchException {
-        List<Query> matchQueries = new ArrayList<>();
-        Query byAccessScope = MatchQuery.of(m ->
-                m.field(VehicleField.ACCESSSCOPE.value()).query(AccessScope.PUBLIC.value()))._toQuery();
-        matchQueries.add(byAccessScope);
+    public PagingResults<VehicleSearch> searchByMatchFields(Integer size, Integer page,
+                                                            List<VehicleFieldValuePair<String>> matchFields,
+                                                            AccessScope accessScope) throws VehicleSearchException {
+        Query boolQuery = buildBoolQuery(matchFields, accessScope);
 
-        Query query = null;
-        for (VehicleFieldValuePair<String> fieldValuePair : matchFields) {
-            query = MatchQuery.of(m -> m.field(fieldValuePair.getField().value()).query(fieldValuePair.getValue()))
-                    ._toQuery();
-            matchQueries.add(query);
+        Integer from = getFrom(size, page);
+
+        try {
+            SearchResponse<VehicleSearch> response = esClient.search(builder -> builder
+                            .index(ES_IDX_ENDPOINT)
+                            .query(boolQuery)
+                            .from(from)
+                            .size(size)
+                            .sort(getSortOption())
+                            .fields(f -> f.field(VehicleField.ID.value())),
+                    VehicleSearch.class);
+
+            return buildPagingResults(size, page, response);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            log.error("failed to search by match fields {}", ioe.getMessage());
+            throw new VehicleSearchException("failed to search by match fields");
         }
-        Query boolQuery = BoolQuery.of(b -> b.must(matchQueries))._toQuery();
+    }
+
+    @Override
+    public List<String> searchForAggregation(VehicleField field, List<VehicleFieldValuePair<String>> matchFields, Integer size)
+            throws VehicleSearchException {
+        Query boolQuery = buildBoolQuery(matchFields, AccessScope.PUBLIC);
 
         try {
             SearchResponse<VehicleSearch> response = esClient.search(builder -> builder
                     .index(ES_IDX_ENDPOINT)
-                    .size(0)
+                    .size(0) // do not return hits
                     .query(boolQuery)
-                    .aggregations("vehicle-agg", aggBuilder -> aggBuilder.terms(t -> t.field(field.value()))),
+                    .aggregations(AGG_NAME, aggBuilder -> aggBuilder.terms(t -> t.field(field.value()).size(size))),
                     VehicleSearch.class);
 
-            Aggregate aggregate = response.aggregations().get("vehicle-agg");
+            Aggregate aggregate = response.aggregations().get(AGG_NAME);
             if (aggregate.isSterms()) {
                 List<StringTermsBucket> termBuckets = aggregate.sterms().buckets().array();
                 return termBuckets.stream().map(StringTermsBucket::key).toList();
@@ -104,43 +121,72 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
                                                                     Query queryFilter,
                                                                     Integer size,
                                                                     Integer page) throws VehicleSearchException {
-        final int _size = ( size == null ) ? 20 : size;
-        final int _page = ( page == null ) ? 0 : page;
-        Integer from = _size * (_page - 1);
-
-        //sort by model year
-        final SortOptions modelYearSorter = SortOptions.of(soBuilder -> soBuilder.field(
-                FieldSort.of(fs->fs.field(VehicleField.MODELYEAR.value()).order(SortOrder.Desc))));
+        Integer from = getFrom(size, page);
 
         try {
             SearchResponse<VehicleSearch> response = esClient.search(builder -> builder
                             .index(ES_IDX_ENDPOINT)
-                            .size(_size)
+                            .size(size)
                             .from(from)
                             .q(keyword)
-                            .sort(modelYearSorter)
+                            .sort(getSortOption())
                             .postFilter(queryFilter)
                             .fields(f -> f.field(VehicleField.ID.value())),
                     VehicleSearch.class);
 
-            assert response.hits().total() != null;
-            final long total = response.hits().total().value();
-            log.info("found total {} vehicle profiles for keyword search", response.hits().total().value());
-
-            List<VehicleSearch> results = response.hits().hits().stream().map(Hit::source).toList();
-
-            return PagingResults.<VehicleSearch>builder()
-                    .total(total)
-                    .page(page)
-                    .size(size)
-                    .resultSet(results)
-                    .build();
-
+            return buildPagingResults(size, page, response);
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            log.error("failed to search vehicle profiles {}", ioe.getMessage());
-            throw new VehicleSearchException("failed to search vehicle profiles");
+            log.error("failed to aggregate search {}", ioe.getMessage());
+            throw new VehicleSearchException("failed to do aggregate search");
         }
+    }
+
+    private PagingResults<VehicleSearch> buildPagingResults(Integer size, Integer page,
+                                                            SearchResponse<VehicleSearch> response) {
+        assert response.hits().total() != null;
+        final long total = response.hits().total().value();
+        log.info("found total {} vehicle profiles for keyword search", response.hits().total().value());
+
+        List<VehicleSearch> results = response.hits().hits().stream().map(Hit::source).toList();
+
+        return PagingResults.<VehicleSearch>builder()
+                .total(total)
+                .page(page)
+                .size(size)
+                .resultSet(results)
+                .build();
+    }
+
+    private Query buildBoolQuery(List<VehicleFieldValuePair<String>> matchFields, AccessScope accessScope) {
+        List<Query> matchQueries = new ArrayList<>();
+
+        matchQueries.add(getAccessScopeQuery(accessScope));
+
+        Query query;
+        for (VehicleFieldValuePair<String> fieldValuePair : matchFields) {
+            query = MatchQuery.of(m -> m.field(fieldValuePair.getField().value()).query(fieldValuePair.getValue()))
+                    ._toQuery();
+            matchQueries.add(query);
+        }
+        return BoolQuery.of(b -> b.must(matchQueries))._toQuery();
+    }
+
+    private Query getAccessScopeQuery(AccessScope accessScope) {
+        return MatchQuery.of(m -> m.field(VehicleField.ACCESSSCOPE.value()).query(accessScope.value())
+        )._toQuery();
+    }
+
+    private SortOptions getSortOption() {
+        //sort by model year
+        return SortOptions.of(soBuilder -> soBuilder.field(
+                FieldSort.of(fs->fs.field(VehicleField.MODELYEAR.value()).order(SortOrder.Desc))));
+    }
+
+    private Integer getFrom(Integer size, Integer page){
+        final int _size = ( size == null ) ? 20 : size;
+        final int _page = ( page == null ) ? 0 : page;
+        return _size * (_page - 1);
     }
 
     @Override
@@ -158,8 +204,8 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
             return vehicleSearch;
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            log.error("failed to create index {} ", ioe.getMessage());
-            throw new VehicleSearchException("Not able to save vehicle search into Elasticsearch, please contact system administrator.");
+            log.error("failed to create index for vehicle {} ", ioe.getMessage());
+            throw new VehicleSearchException("Not able to save vehicle search, please contact system administrator.");
         }
     }
 
@@ -184,7 +230,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
         } catch (IOException ioe) {
             ioe.printStackTrace();
             log.error("failed to create bulk indexes {}", ioe.getMessage());
-            throw new VehicleSearchException("Not able to save a list of vehicle search, please contact system administrator.");
+            throw new VehicleSearchException("Not able to save vehicle search, please contact system administrator.");
         }
         return vehicleSearchList.size();
     }

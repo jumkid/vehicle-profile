@@ -26,7 +26,14 @@ public interface VehicleMasterService {
                                                    final Integer page,
                                                    final SearchByCriteria searchFunction) throws VehicleSearchException;
 
-    List<String> searchForAggregation(final VehicleField field, final List<VehicleFieldValuePair<String>> matchFields)
+    PagingResults<Vehicle> searchByMatchFields(final Integer size,
+                                               final Integer page,
+                                               final List<VehicleFieldValuePair<String>> matchFields)
+            throws VehicleSearchException;
+
+    List<String> searchForAggregation(final VehicleField field,
+                                      final List<VehicleFieldValuePair<String>> matchFields,
+                                      final Integer size)
             throws VehicleSearchException;
 
     Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException;

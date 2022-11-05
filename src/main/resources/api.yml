@@ -22,7 +22,7 @@ tags:
   - name: test
     description: API for test
 paths:
-  /vehicles:
+  '/vehicles':
     get:
       tags:
         - v1
@@ -117,8 +117,42 @@ paths:
         '200':
           $ref: '#/components/responses/200-vehicles'        
  
+  '/vehicle/search-matchers':
+    post:
+      tags:
+        - v1
+        - test
+      operationId: searchByMatchers
+      description: search by match fields
+      security:
+        - Authorization: []
+      parameters:
+        - name: size
+          description: search result size
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: page
+          description: page number of search result
+          in: query
+          required: true
+          schema:
+            type: integer
+      requestBody:      
+        description: match fields name and value list
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/VehicleFieldValuePair'
+      responses:
+        '200':
+          $ref: '#/components/responses/200-vehicles'
+
   '/vehicle/search-aggregation':
-    get:
+    post:
       tags:
         - v1
         - test
@@ -133,14 +167,20 @@ paths:
           required: true
           schema:
             type: string
-        - name: matchFields
-          description: match fields name and value map
+        - name: size
+          description: size of bucket results
           in: query
           required: true
           schema:
-            type: array
-            items:
-                  $ref: '#/components/schemas/VehicleFieldValuePair'
+            type: number    
+      requestBody:      
+        description: match fields name and value list
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/VehicleFieldValuePair'
       responses:
         '200':
           description: successful

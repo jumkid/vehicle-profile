@@ -45,6 +45,7 @@ public class VehicleMasterAPITests {
     private MockMvc mockMvc;
 
     private Vehicle vehicle;
+    private List<Vehicle> vehicleList;
 
     private VehicleMasterEntity entity;
 
@@ -63,6 +64,7 @@ public class VehicleMasterAPITests {
     public void setup() {
         try {
             vehicle = APITestsSetup.buildVehicle();
+            vehicleList = APITestsSetup.buildVehicles();
 
             entity = vehicleMapper.dtoToEntity(vehicle);
 
@@ -155,7 +157,6 @@ public class VehicleMasterAPITests {
         Integer size = 10;
         Integer page = 1;
 
-        List<Vehicle> vehicleList = APITestsSetup.buildVehicles();
         PagingResults<VehicleSearch> pagingResults = PagingResults.<VehicleSearch>builder()
                 .total(10L)
                 .page(page)
@@ -204,15 +205,15 @@ public class VehicleMasterAPITests {
                 List.of(new VehicleFieldValuePair<String>(VehicleField.MAKE, "value"));
         List<String> resultKeys = List.of("key 1", "key 2");
 
-        when(vehicleSearchRepository.searchForAggregation(field, emptyPairs)).thenReturn(resultKeys);
-        when(vehicleSearchRepository.searchForAggregation(field, fieldValuePairsPairs)).thenReturn(resultKeys);
+        when(vehicleSearchRepository.searchForAggregation(field, emptyPairs, null)).thenReturn(resultKeys);
+        when(vehicleSearchRepository.searchForAggregation(field, fieldValuePairsPairs, null)).thenReturn(resultKeys);
 
-        mockMvc.perform(get("/vehicles/search-aggregation")
+        mockMvc.perform(post("/vehicles/search-aggregation")
                 .param("field", field.value())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/vehicles/search-aggregation")
+        mockMvc.perform(post("/vehicles/search-aggregation")
                 .param("field", field.value())
                 .content(new ObjectMapper().writeValueAsBytes(fieldValuePairsPairs))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -222,7 +223,58 @@ public class VehicleMasterAPITests {
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
     public void whenMissFieldsSearchAggregation_shouldGetError() throws Exception {
-        mockMvc.perform(get("/vehicles/search-aggregation")
+        mockMvc.perform(post("/vehicles/search-aggregation")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username="test", password="test", authorities="GUEST_ROLE")
+    public void whenGivenFieldsSearchMatchers_shouldGetSearchResult() throws Exception {
+        Integer size = 20, page = 1;
+        List<VehicleFieldValuePair<String>> fieldValuePairsPairs =
+                List.of(new VehicleFieldValuePair<String>(VehicleField.MAKE, "value"));
+        PagingResults<VehicleSearch> pagingResults = PagingResults.<VehicleSearch>builder()
+                .total(10L)
+                .page(page)
+                .size(size)
+                .resultSet(vehicleSearchMapper.dtoListToSearches(vehicleList))
+                .build();
+
+        when(vehicleSearchRepository.searchByMatchFields(size, page, fieldValuePairsPairs, AccessScope.PUBLIC))
+                .thenReturn(pagingResults);
+
+        for (Vehicle vehicle : vehicleList) {
+            when(vehicleMasterRepository.findById(vehicle.getId())).thenReturn(Optional.of(vehicleMapper.dtoToEntity(vehicle)));
+        }
+
+        mockMvc.perform(post("/vehicles/search-matchers")
+                .param("size", size.toString())
+                .param("page", page.toString())
+                .content(new ObjectMapper().writeValueAsBytes(fieldValuePairsPairs))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username="test", password="test", authorities="GUEST_ROLE")
+    public void whenMissParamFieldsSearchMatchers_shouldGetError() throws Exception {
+        Integer size = 20, page = 1;
+        List<VehicleFieldValuePair<String>> fieldValuePairsPairs =
+                List.of(new VehicleFieldValuePair<String>(VehicleField.MAKE, "value"));
+
+        mockMvc.perform(post("/vehicles/search-matchers")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/vehicles/search-matchers")
+                .param("size", size.toString())
+                .param("page", page.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/vehicles/search-matchers")
+                .content(new ObjectMapper().writeValueAsBytes(fieldValuePairsPairs))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }

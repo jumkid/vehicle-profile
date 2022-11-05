@@ -69,13 +69,32 @@ public class VehicleSearchController {
                 .build();
     }
 
-    @GetMapping(value = "/search-aggregation", consumes = "application/json")
+    @PostMapping(value = "/search-aggregation", consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('GUEST_ROLE', 'USER_ROLE', 'ADMIN_ROLE')")
     public List<String> searchForAggregation(@NotNull @Valid @RequestParam VehicleField field,
-                                       @RequestBody(required = false) List<@Valid VehicleFieldValuePair<String>> matchFields) {
+                                             @Min(1) @RequestParam(required = false) Integer size,
+                                             @RequestBody(required = false) List<@Valid VehicleFieldValuePair<String>> matchFields) {
         log.debug("search aggregation for field {}, match fields {}", field, matchFields);
         if (matchFields == null) matchFields = Collections.emptyList();
-        return vehicleMasterService.searchForAggregation(field, matchFields);
+        return vehicleMasterService.searchForAggregation(field, matchFields, size);
+    }
+
+    @PostMapping(value = "/search-matchers", consumes = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('GUEST_ROLE', 'USER_ROLE', 'ADMIN_ROLE')")
+    public PagingResponse<Vehicle> searchByMatchers(@Min(1) @Valid @RequestParam Integer size,
+                                                    @Min(1) @Valid @RequestParam Integer page,
+                                                    @RequestBody List<@Valid VehicleFieldValuePair<String>> matchFields) {
+        log.debug("search by match fields {}", matchFields);
+        PagingResults<Vehicle> results = vehicleMasterService.searchByMatchFields(size, page, matchFields);
+
+        return PagingResponse.<Vehicle>builder()
+                .success(true)
+                .total(results.getTotal())
+                .page(results.getPage())
+                .size(results.getSize())
+                .data(results.getResultSet())
+                .build();
     }
 }

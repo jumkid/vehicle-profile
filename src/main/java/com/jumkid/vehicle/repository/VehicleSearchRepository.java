@@ -9,7 +9,6 @@ import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 
 import java.util.List;
-import java.util.Map;
 
 public interface VehicleSearchRepository {
 
@@ -19,7 +18,11 @@ public interface VehicleSearchRepository {
     PagingResults<VehicleSearch> searchByAccessScope(String keyword, Integer size, Integer page, AccessScope accessScope)
             throws VehicleSearchException;
 
-    List<String> searchForAggregation(VehicleField aggFieldName, List<VehicleFieldValuePair<String>> matchFields)
+    PagingResults<VehicleSearch> searchByMatchFields(Integer size, Integer page,
+                                                     List<VehicleFieldValuePair<String>> matchFields,
+                                                     AccessScope accessScope) throws VehicleSearchException;
+
+    List<String> searchForAggregation(VehicleField aggFieldName, List<VehicleFieldValuePair<String>> matchFields, Integer size)
             throws VehicleSearchException;
 
     VehicleSearch save(VehicleSearch vehicleSearch);
