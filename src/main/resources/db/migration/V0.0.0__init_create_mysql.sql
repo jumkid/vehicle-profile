@@ -33,6 +33,7 @@ CREATE TABLE vehicle_master (
     vehicle_engine_id INTEGER,
     vehicle_transmission_id INTEGER,
     media_gallery_id VARCHAR(100),
+    category VARCHAR(64),
 
     created_by VARCHAR(255),
     creation_date DATETIME(3),

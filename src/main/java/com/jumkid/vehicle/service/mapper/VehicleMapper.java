@@ -26,4 +26,6 @@ public interface VehicleMapper {
 
     List<Vehicle> entitiesToDTOs(List<VehicleMasterEntity> entities);
 
+    List<VehicleMasterEntity> dtosToEntities(List<Vehicle> entities);
+
 }

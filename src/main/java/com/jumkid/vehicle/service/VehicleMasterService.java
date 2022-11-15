@@ -2,12 +2,12 @@ package com.jumkid.vehicle.service;
 
 import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.vehicle.enums.VehicleField;
+import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -44,6 +44,8 @@ public interface VehicleMasterService {
 
     void deleteUserVehicle(String vehicleId);
 
-    Integer importVehicleMaster(InputStream is) throws IOException;
+    Integer importVehicleMaster(InputStream is) throws VehicleImportException;
+
+    Integer importVehicleMaster(List<Vehicle> vehicleList) throws VehicleImportException;
 
 }

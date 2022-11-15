@@ -36,6 +36,8 @@ public class VehicleSearch implements Serializable {
 
     private String trimLevel;
 
+    private String category;
+
     private VehicleEngineSearch vehicleEngine;
 
     private VehicleTransmissionSearch vehicleTransmission;

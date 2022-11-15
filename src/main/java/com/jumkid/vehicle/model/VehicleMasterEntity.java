@@ -48,6 +48,9 @@ public class VehicleMasterEntity {
     @Column(name = VehicleField.Fields.MEDIA_GALLERY_ID)
     private String mediaGalleryId;
 
+    @Column(name = VehicleField.Fields.CATEGORY)
+    private String category;
+
     @Column(name = VehicleField.Fields.CREATION_DATE)
     private LocalDateTime creationDate;
 

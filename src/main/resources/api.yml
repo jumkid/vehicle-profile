@@ -196,8 +196,8 @@ paths:
     get:
       tags:
         - v1
-      operationId: getUserVehicle
-      description: get single private vehicle profile with corresponding user id or public vehicle profile
+      operationId: getVehicle
+      description: get single vehicle profile with corresponding id
       security:
         - Authorization: []
       parameters:

@@ -6,6 +6,7 @@ import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
 import com.jumkid.vehicle.enums.VehicleField;
+import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
@@ -205,10 +206,15 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
-    public Integer importVehicleMaster(InputStream is) throws IOException {
-        log.info("importing vehicle master data ...");
-
+    public Integer importVehicleMaster(InputStream is) throws VehicleImportException {
+        log.info("importing vehicle master data from input stream");
         return vehicleMasterImportHandler.batchImport(is);
+    }
+
+    @Override
+    public Integer importVehicleMaster(List<Vehicle> vehicleList) throws VehicleImportException {
+        log.info("importing vehicle master data");
+        return vehicleMasterImportHandler.batchImport(vehicleList);
     }
 
     private String getCurrentUserId() {

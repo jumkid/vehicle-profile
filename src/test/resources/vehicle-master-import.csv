@@ -1,22 +1,11 @@
-system-stock,toyota,highlander,2022,l,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,front wheel drive,,AT,8
-system-stock,toyota,highlander,2022,l,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,four wheel drive,,AT,8
-system-stock,toyota,highlander,2022,le,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,front wheel drive,,AT,8
-system-stock,toyota,highlander,2022,le,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,four wheel drive,,AT,8
-system-stock,toyota,highlander,2022,xle,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,front wheel drive,,AT,8
-system-stock,toyota,highlander,2022,xle,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,four wheel drive,,AT,8
-system-stock,toyota,highlander,2022,xse,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,front wheel drive,,AT,8
-system-stock,toyota,highlander,2022,xse,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,four wheel drive,,AT,8
-system-stock,toyota,highlander,2022,limited,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,front wheel drive,,AT,8
-system-stock,toyota,highlander,2022,limited,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,four wheel drive,,AT,8
-system-stock,toyota,highlander,2022,platinum ,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,front wheel drive,,AT,8
-system-stock,toyota,highlander,2022,platinum ,,public,3.5L V6,Regular Unleaded V6,6,3.5,gasoline,295,6600,263,4700,2GR-FKS,8-speed ECT-i automatic transmission,Automatic,four wheel drive,,AT,8
-system-stock,toyota,highlander,2022,le,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,front wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,le,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,four wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,xle,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,front wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,xle,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,four wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,bronze,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,front wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,bronze,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,four wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,limited,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,front wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,limited,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,four wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,platinum ,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,front wheel drive,,CVT,1
-system-stock,toyota,highlander,2022,platinum ,,public,2.5L V6 Hybrid,Gas/Electric I4,4,2.5,gasoline electric,243,6000,175,4400,A25A-FXS,CVT Automatic,Automatic,four wheel drive,,CVT,1
+system-stock,toyota,rav4,2022,xle premium,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,FWD,,AT,8
+system-stock,toyota,rav4,2022,adventure,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,AWD,,AT,8
+system-stock,toyota,rav4,2022,le,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,AWD,,AT,8
+system-stock,toyota,rav4,2022,le,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,FWD,,AT,8
+system-stock,toyota,rav4,2022,limited,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,AWD,,AT,8
+system-stock,toyota,rav4,2022,limited,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,FWD,,AT,8
+system-stock,toyota,rav4,2022,trd off road,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,FWD,,AT,8
+system-stock,toyota,rav4,2022,xle,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,AWD,,AT,8
+system-stock,toyota,rav4,2022,xle,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,FWD,,AT,8
+system-stock,toyota,rav4,2022,xle premium,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,AWD,,AT,8
+system-stock,toyota,rav4,2022,xle premium,,suv,public,2.5L I4,Regular Unleaded I-4,4,2.5,gasoline,203 ,6600,184 ,5000,NA,8-speed transmission,Automatic w/OD,FWD,,AT,8

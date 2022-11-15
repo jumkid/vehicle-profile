@@ -28,6 +28,14 @@ public enum VehicleField {
     @FieldNameConstants.Include MEDIA_GALLERY_ID("media_gallery_id"),
     @FieldNameConstants.Include MEDIAGALLERYID("mediaGalleryId"),
 
+    @FieldNameConstants.Include CATEGORY("category"),
+
+    @FieldNameConstants.Include VEHICLEEINGINE_NAME("vehicleEngine.name"),
+    @FieldNameConstants.Include VEHICLEEINGINE_CYLINDER("vehicleEngine.cylinder"),
+
+    @FieldNameConstants.Include VEHICLETRANSMISSSION_NAME("vehicleTransmission.name"),
+    @FieldNameConstants.Include VEHICLETRANSMISSSION_DRIVETRAIN("vehicleTransmission.drivetrain"),
+
     @FieldNameConstants.Include CREATION_DATE("creation_date"),
     @FieldNameConstants.Include CREATIONDATE("creationDate"),
 
