@@ -35,7 +35,8 @@ public class DTOHandler {
 
             if (dto.getModificationDate() == null) { throw new ModificationDatetimeNotFoundException(); }
 
-            if (!oldEntity.getModificationDate().truncatedTo(ChronoUnit.MILLIS).equals(dto.getModificationDate())) {
+            if (!oldEntity.getModificationDate().truncatedTo(ChronoUnit.MILLIS)
+                    .equals(dto.getModificationDate().truncatedTo(ChronoUnit.MILLIS))) {
                 throw new VehicleDataOutdatedException();
             }
         } else {
@@ -44,7 +45,7 @@ public class DTOHandler {
         }
 
         dto.setModifiedBy(userId);
-        dto.setModificationDate(now);
+        dto.setModificationDate(now.truncatedTo(ChronoUnit.MILLIS));
     }
 
 }
