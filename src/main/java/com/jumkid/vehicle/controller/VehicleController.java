@@ -42,14 +42,21 @@ public class VehicleController {
     @PostAuthorize("@vehicleAccessPermissionAuthorizer.isPublic(returnObject)" +
             " || (hasAuthority('USER_ROLE') && @vehicleAccessPermissionAuthorizer.isOwner(returnObject))")
     public Vehicle getUserVehicle(@NotNull @Valid @PathVariable String id) {
-        return vehicleMasterService.getUserVehicle(id);
+        return vehicleMasterService.get(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE')")
     public Vehicle save(@NotNull @Valid @RequestBody Vehicle vehicle){
-        return vehicleMasterService.saveUserVehicle(vehicle);
+        return vehicleMasterService.save(vehicle);
+    }
+
+    @PostMapping("/save-as-new")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE') && @vehicleAccessPermissionAuthorizer.isPublic(#vehicle)")
+    public Vehicle saveAsNew(@NotNull @Valid @RequestBody Vehicle vehicle){
+        return vehicleMasterService.saveAsNew(vehicle);
     }
 
     @PutMapping(value = "{id}")
@@ -58,7 +65,7 @@ public class VehicleController {
             " || (hasAuthority('USER_ROLE') && @vehicleAccessPermissionAuthorizer.isOwner(#id))")
     public Vehicle update(@NotNull @Valid @PathVariable String id,
                         @NotNull @RequestBody Vehicle partialVehicle){
-        return vehicleMasterService.updateUserVehicle(id, partialVehicle);
+        return vehicleMasterService.update(id, partialVehicle);
     }
 
     @DeleteMapping(value = "{id}")
@@ -66,7 +73,7 @@ public class VehicleController {
     @PreAuthorize("hasAuthority('ADMIN_ROLE')" +
             " || (hasAuthority('USER_ROLE') && @vehicleAccessPermissionAuthorizer.isOwner(#id))")
     public CommonResponse deleteUserVehicle(@PathVariable String id) {
-        vehicleMasterService.deleteUserVehicle(id);
+        vehicleMasterService.delete(id);
         return CommonResponse.builder().success(true).data(String.valueOf(id)).build();
     }
 

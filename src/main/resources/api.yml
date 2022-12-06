@@ -11,16 +11,19 @@ info:
   license:
     name: Jumkid Public License
     url: 'http://license.jumkid.com'
+
 servers:
   - description: Testing
     url: 'http://localhost:8084'
   - description: Live production
     url: 'http://api.jumkid.com'
+
 tags:
   - name: v1
     description: API for version 0.9.1
   - name: test
     description: API for test
+
 paths:
   '/vehicles':
     get:
@@ -39,7 +42,26 @@ paths:
       tags:
         - v1
       operationId: addVehicle
-      description: add new activity for user
+      description: add new vehicle for user
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+      responses:
+        '201':
+          $ref: '#/components/responses/201-created'
+        '403':
+          $ref: '#/components/responses/403-access-deny'
+  
+  '/vehicles/save-as-new':
+    post:
+      tags:
+        - v1
+      operationId: saveAsNewVehicle
+      description: save as a new vehicle
       security:
         - Authorization: []
       requestBody:

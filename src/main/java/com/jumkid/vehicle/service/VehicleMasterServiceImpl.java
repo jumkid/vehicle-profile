@@ -1,7 +1,9 @@
 package com.jumkid.vehicle.service;
 
 import com.jumkid.share.security.AccessScope;
+import com.jumkid.share.security.exception.InternalRestApiException;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
+import com.jumkid.share.service.InternalRestApiClient;
 import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
@@ -15,24 +17,37 @@ import com.jumkid.vehicle.repository.VehicleMasterRepository;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
+import com.jumkid.vehicle.service.dto.external.MediaFile;
 import com.jumkid.vehicle.service.handler.DTOHandler;
 import com.jumkid.vehicle.service.handler.SmartKeywordHandler;
 import com.jumkid.vehicle.service.handler.VehicleMasterImportHandler;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 @Service
 public class VehicleMasterServiceImpl implements VehicleMasterService{
+
+    @Value("${spring.kafka.topic.name.vehicle.create}")
+    private String kafkaTopicVehicleCreate;
+
+    @Value("${internal.api.content-vault}")
+    private String internalApiContentVault;
+
+    @Value("${internal.api.content-vault.clone}")
+    private String internalApiContentVaultClone;
 
     private final VehicleMasterRepository vehicleMasterRepository;
 
@@ -44,24 +59,33 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     private final DTOHandler dtoHandler;
     private final SmartKeywordHandler smartKeywordHandler;
 
+    private final KafkaTemplate<String, Vehicle> kafkaTemplate;
+
     private final VehicleMapper vehicleMapper;
     private final VehicleSearchMapper vehicleSearchMapper;
 
-    @Autowired
+    private final InternalRestApiClient internalRestApiClient;
+
     public VehicleMasterServiceImpl(VehicleMasterRepository vehicleMasterRepository,
                                     VehicleSearchRepository vehicleSearchRepository,
                                     UserProfileManager userProfileManager,
                                     VehicleMasterImportHandler vehicleMasterImportHandler,
-                                    DTOHandler dtoHandler, SmartKeywordHandler smartKeywordHandler, VehicleMapper vehicleMapper,
-                                    VehicleSearchMapper vehicleSearchMapper) {
+                                    DTOHandler dtoHandler,
+                                    SmartKeywordHandler smartKeywordHandler,
+                                    KafkaTemplate<String, Vehicle> kafkaTemplate,
+                                    VehicleMapper vehicleMapper,
+                                    VehicleSearchMapper vehicleSearchMapper,
+                                    InternalRestApiClient internalRestApiClient) {
         this.vehicleMasterRepository = vehicleMasterRepository;
         this.vehicleSearchRepository = vehicleSearchRepository;
         this.userProfileManager = userProfileManager;
         this.vehicleMasterImportHandler = vehicleMasterImportHandler;
         this.dtoHandler = dtoHandler;
         this.smartKeywordHandler = smartKeywordHandler;
+        this.kafkaTemplate = kafkaTemplate;
         this.vehicleMapper = vehicleMapper;
         this.vehicleSearchMapper = vehicleSearchMapper;
+        this.internalRestApiClient = internalRestApiClient;
     }
 
     @Override
@@ -129,7 +153,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
         if (!searchResult.getResultSet().isEmpty()) {
             List<Vehicle> results = searchResult.getResultSet().stream()
-                    .map(vehicleSearch -> this.getUserVehicle(vehicleSearch.getId()))
+                    .map(vehicleSearch -> this.get(vehicleSearch.getId()))
                     .toList();
 
             pagingResults.setTotal(searchResult.getTotal());
@@ -144,7 +168,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
-    public Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException {
+    public Vehicle get(String vehicleId) throws VehicleNotFoundException {
         VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
         log.debug("Found vehicle with id {} records for user", vehicleId);
@@ -154,23 +178,60 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     @Override
     @Transactional
-    public Vehicle saveUserVehicle(Vehicle vehicle) throws UserProfileNotFoundException{
+    public Vehicle save(Vehicle vehicle) throws UserProfileNotFoundException{
         dtoHandler.normalizeDTO(null, vehicle, null);
 
         VehicleMasterEntity entity = vehicleMapper.dtoToEntity(vehicle);
-        entity.setId(null);
 
         entity = vehicleMasterRepository.save(entity);
         log.info("new user vehicle data saved with id {}", entity.getId());
 
         vehicleSearchRepository.save(vehicleSearchMapper.entityToSearchMeta(entity));
+        log.debug("new user vehicle search is saved");
 
-        return vehicleMapper.entityToDto(entity);
+        Vehicle newVehicle = vehicleMapper.entityToDto(entity);
+
+        // send event for vehicle creation
+        kafkaTemplate.send(kafkaTopicVehicleCreate, newVehicle);
+
+        return newVehicle;
     }
 
     @Override
     @Transactional
-    public Vehicle updateUserVehicle(String vehicleId, Vehicle vehicle) {
+    public Vehicle saveAsNew(Vehicle vehicle) {
+        Vehicle newVehicle = save(vehicle);
+
+        try {
+            // call content service to clone media gallery
+            if (newVehicle.getMediaGalleryId() != null) {
+                URI uri = URI.create(internalApiContentVault + internalApiContentVaultClone + "/" + vehicle.getMediaGalleryId());
+                log.debug("calling internal api {}", uri);
+                MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+                params.add("title", newVehicle.getName());
+                MediaFile newGallery = internalRestApiClient.post(uri, params, MediaFile.class);
+                log.debug("clone to new gallery with uuid {}", newGallery.getUuid());
+
+                if (newGallery.getUuid() != null) {
+                    return update(newVehicle.getId(),
+                            Vehicle.builder()
+                                    .mediaGalleryId(newGallery.getUuid())
+                                    .modificationDate(newVehicle.getModificationDate())
+                                    .build());
+                }
+            }
+        } catch (InternalRestApiException e) {
+            e.printStackTrace();
+            log.error("Failed to call internal api to clone gallery {}", e.getMessage());
+            return update(newVehicle.getId(), Vehicle.builder().mediaGalleryId(null).build());
+        }
+
+        return newVehicle;
+    }
+
+    @Override
+    @Transactional
+    public Vehicle update(String vehicleId, Vehicle vehicle) {
         VehicleMasterEntity updateEntity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
 
@@ -189,7 +250,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
     @Override
     @Transactional
-    public void deleteUserVehicle(String vehicleId) {
+    public void delete(String vehicleId) {
         VehicleMasterEntity existingEntity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
 

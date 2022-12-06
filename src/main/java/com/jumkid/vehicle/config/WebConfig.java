@@ -1,14 +1,17 @@
 package com.jumkid.vehicle.config;
 
 import com.jumkid.share.security.AccessScope;
+import com.jumkid.share.service.InternalRestApiClient;
+import com.jumkid.share.user.UserProfileManager;
 import com.jumkid.vehicle.enums.VehicleField;
-import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -31,6 +34,13 @@ public class WebConfig implements WebMvcConfigurer {
         public VehicleField convert(String source) {
             return VehicleField.valueOf(source.toUpperCase());
         }
+    }
+
+    @Bean
+    public InternalRestApiClient internalRestApiClient(RestTemplate restTemplate,
+                                                       UserProfileManager userProfileManager,
+                                                       HttpServletRequest httpServletRequest) {
+        return new InternalRestApiClient(restTemplate, userProfileManager, httpServletRequest);
     }
 
 }

@@ -36,13 +36,15 @@ public interface VehicleMasterService {
                                       final Integer size)
             throws VehicleSearchException;
 
-    Vehicle getUserVehicle(String vehicleId) throws VehicleNotFoundException;
+    Vehicle get(String vehicleId) throws VehicleNotFoundException;
 
-    Vehicle saveUserVehicle(Vehicle vehicle);
+    Vehicle save(Vehicle vehicle);
 
-    Vehicle updateUserVehicle(String vehicleId, Vehicle vehicle);
+    Vehicle saveAsNew(Vehicle vehicle);
 
-    void deleteUserVehicle(String vehicleId);
+    Vehicle update(String vehicleId, Vehicle vehicle);
+
+    void delete(String vehicleId);
 
     Integer importVehicleMaster(InputStream is) throws VehicleImportException;
 

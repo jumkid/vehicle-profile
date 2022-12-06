@@ -24,6 +24,7 @@ public class DTOHandler {
 
     public void normalizeDTO(String vehicleId, Vehicle dto, VehicleMasterEntity oldEntity) {
         if (vehicleId != null) { dto.setId(vehicleId); }
+        if (vehicleId == null && oldEntity == null) { dto.setId(null); }
 
         LocalDateTime now = LocalDateTime.now();
         UserProfile userProfile = userProfileManager.fetchUserProfile();
