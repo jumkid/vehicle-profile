@@ -43,6 +43,9 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     @Value("${spring.kafka.topic.name.vehicle.create}")
     private String kafkaTopicVehicleCreate;
 
+    @Value("${spring.kafka.topic.name.vehicle.delete}")
+    private String kafkaTopicVehicleDelete;
+
     @Value("${internal.api.content-vault}")
     private String internalApiContentVault;
 
@@ -191,7 +194,6 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
 
         Vehicle newVehicle = vehicleMapper.entityToDto(entity);
 
-        // send event for vehicle creation
         kafkaTemplate.send(kafkaTopicVehicleCreate, newVehicle);
 
         return newVehicle;
@@ -259,6 +261,10 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
             log.info("Vehicle with id {} is removed.", vehicleId);
 
             vehicleSearchRepository.delete(vehicleId);
+            log.debug("Vehicle search metadata is removed");
+
+            kafkaTemplate.send(kafkaTopicVehicleDelete, vehicleMapper.entityToDto(existingEntity));
+
         } catch (Exception e) {
             e.printStackTrace();
             log.error("failed to delete user vehicle by id {}", vehicleId);

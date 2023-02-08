@@ -17,7 +17,7 @@
     <properties>
         <java.version>17</java.version>
 
-        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
+        <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.24</org.projectlombok.version>
         <junit.version>4.13.2</junit.version>
         <jaxb.version>2.3.0</jaxb.version>
@@ -27,6 +27,7 @@
         <mysql.driver.version>8.0.28</mysql.driver.version>
         <h2.db.version>2.1.210</h2.db.version>
         <elasticsearch.version>8.3.3</elasticsearch.version>
+        <testcontainers.kafka.version>1.17.6</testcontainers.kafka.version>
 
         <!-- jumkid modules -->
         <sharejar.version>1.0.1</sharejar.version>
@@ -148,6 +149,17 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>${testcontainers.kafka.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

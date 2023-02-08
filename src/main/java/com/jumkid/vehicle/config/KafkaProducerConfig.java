@@ -2,11 +2,13 @@ package com.jumkid.vehicle.config;
 
 import com.jumkid.vehicle.service.dto.Vehicle;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -17,13 +19,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaEventConfig {
+public class KafkaProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
+    @Value("${spring.kafka.topic.name.vehicle.create}")
+    private String kafkaTopicVehicleCreate;
+
+    @Value("${spring.kafka.topic.name.vehicle.delete}")
+    private String kafkaTopicVehicleDelete;
+
     @Bean
-    public KafkaAdmin kafkaAdmin() {
+    public NewTopic topicVehicleCreate() {
+        return TopicBuilder.name(kafkaTopicVehicleCreate).build();
+    }
+
+    @Bean
+    public NewTopic topicVehicleDelete() {
+        return TopicBuilder.name(kafkaTopicVehicleDelete).build();
+    }
+
+    @Bean
+    public KafkaAdmin admin() {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         return new KafkaAdmin(configs);

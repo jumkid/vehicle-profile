@@ -4,6 +4,7 @@ import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.dto.VehicleEngine;
 import com.jumkid.vehicle.service.dto.VehicleTransmission;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
