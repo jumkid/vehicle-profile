@@ -1,9 +1,9 @@
 package com.jumkid.vehicle.service.handler;
 
+import com.jumkid.share.exception.ModificationDatetimeNotFoundException;
+import com.jumkid.share.exception.ModificationDatetimeOutdatedException;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
-import com.jumkid.vehicle.exception.ModificationDatetimeNotFoundException;
-import com.jumkid.vehicle.exception.VehicleDataOutdatedException;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class DTOHandler {
 
             if (!oldEntity.getModificationDate().truncatedTo(ChronoUnit.MILLIS)
                     .equals(dto.getModificationDate().truncatedTo(ChronoUnit.MILLIS))) {
-                throw new VehicleDataOutdatedException();
+                throw new ModificationDatetimeOutdatedException();
             }
         } else {
             dto.setCreationDate(now);

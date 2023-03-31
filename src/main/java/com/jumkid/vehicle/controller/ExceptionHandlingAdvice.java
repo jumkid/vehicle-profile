@@ -1,9 +1,9 @@
 package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.CustomErrorResponse;
+import com.jumkid.share.exception.ModificationDatetimeNotFoundException;
+import com.jumkid.share.exception.ModificationDatetimeOutdatedException;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
-import com.jumkid.vehicle.exception.ModificationDatetimeNotFoundException;
-import com.jumkid.vehicle.exception.VehicleDataOutdatedException;
 import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +41,8 @@ public class ExceptionHandlingAdvice {
         log.warn("The provided argument is missing or invalid.", ex);
         return CustomErrorResponse.builder()
                 .timestamp(Calendar.getInstance().getTime())
-                .property(ex.getFieldErrors().stream().map(FieldError::getField).collect(Collectors.toList()))
-                .details(ex.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList()))
+                .property(ex.getFieldErrors().stream().map(FieldError::getField).toList())
+                .details(ex.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList())
                 .build();
     }
 
@@ -64,10 +64,10 @@ public class ExceptionHandlingAdvice {
                 .timestamp(Calendar.getInstance().getTime())
                 .property(ex.getConstraintViolations().stream()
                         .map(constraintViolation -> constraintViolation.getPropertyPath().toString())
-                        .collect(Collectors.toList()))
+                        .toList())
                 .details(ex.getConstraintViolations().stream()
                         .map(ConstraintViolation::getMessage)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build();
     }
 
@@ -79,9 +79,9 @@ public class ExceptionHandlingAdvice {
                 .build();
     }
 
-    @ExceptionHandler(VehicleDataOutdatedException.class)
+    @ExceptionHandler(ModificationDatetimeOutdatedException.class)
     @ResponseStatus(CONFLICT)
-    public CustomErrorResponse handleMethodArgumentNotValidException(VehicleDataOutdatedException ex) {
+    public CustomErrorResponse handleMethodArgumentNotValidException(ModificationDatetimeOutdatedException ex) {
         log.warn("The target vehicle data has been updated.", ex);
         return new CustomErrorResponse(Calendar.getInstance().getTime(), ex.getMessage());
     }
