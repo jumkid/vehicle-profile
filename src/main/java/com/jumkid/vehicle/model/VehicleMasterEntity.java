@@ -6,7 +6,7 @@ import com.jumkid.vehicle.enums.VehicleTransmissionField;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import com.jumkid.vehicle.enums.VehicleField;

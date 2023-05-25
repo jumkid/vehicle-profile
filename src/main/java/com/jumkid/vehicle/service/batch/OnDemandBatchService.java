@@ -4,5 +4,5 @@ import com.jumkid.vehicle.exception.BatchProcessException;
 
 public interface OnDemandBatchService {
 
-    public int runJob() throws BatchProcessException;
+    int runJob() throws BatchProcessException;
 }

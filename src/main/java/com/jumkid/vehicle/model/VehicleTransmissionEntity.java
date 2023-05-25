@@ -3,7 +3,7 @@ package com.jumkid.vehicle.model;
 import com.jumkid.vehicle.enums.VehicleTransmissionField;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "vehicle_transmission")

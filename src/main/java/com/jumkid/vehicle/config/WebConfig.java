@@ -11,7 +11,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

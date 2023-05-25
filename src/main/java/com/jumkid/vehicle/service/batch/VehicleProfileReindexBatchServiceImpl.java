@@ -5,41 +5,43 @@ import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.model.VehicleSearch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 
 @Slf4j
 @Service(value = "vehicleProfileReindexBatchService")
 public class VehicleProfileReindexBatchServiceImpl implements OnDemandBatchService {
 
-    private final JobBuilderFactory jobBuilderFactory;
+    private final JobRepository jobRepository;
     private final JobLauncher jobLauncher;
     private final JobCompletionNotificationListener jobCompletionNotificationListener;
-    private final StepBuilderFactory stepBuilderFactory;
+    private final PlatformTransactionManager transactionManager;
 
     private final RepositoryItemReader<VehicleMasterEntity> reader;
     private final ItemWriter<VehicleSearch> writer;
     private final ItemProcessor<VehicleMasterEntity, VehicleSearch> processor;
 
-    public VehicleProfileReindexBatchServiceImpl(JobBuilderFactory jobBuilderFactory,
-                                                 JobLauncher jobLauncher,
+    public VehicleProfileReindexBatchServiceImpl(JobRepository jobRepository, JobLauncher jobLauncher,
                                                  JobCompletionNotificationListener jobCompletionNotificationListener,
-                                                 StepBuilderFactory stepBuilderFactory,
+                                                 PlatformTransactionManager transactionManager,
                                                  RepositoryItemReader<VehicleMasterEntity> reader,
                                                  ItemWriter<VehicleSearch> writer,
                                                  ItemProcessor<VehicleMasterEntity, VehicleSearch> processor) {
-        this.jobBuilderFactory = jobBuilderFactory;
+        this.jobRepository = jobRepository;
         this.jobLauncher = jobLauncher;
         this.jobCompletionNotificationListener = jobCompletionNotificationListener;
-        this.stepBuilderFactory = stepBuilderFactory;
+        this.transactionManager = transactionManager;
         this.reader = reader;
         this.writer = writer;
         this.processor = processor;
@@ -54,8 +56,8 @@ public class VehicleProfileReindexBatchServiceImpl implements OnDemandBatchServi
         ItemCountListener countListener = new ItemCountListener();
 
         try {
-            Step step = this.stepBuilderFactory.get("vehicle-profile-reindex-step")
-                    .<VehicleMasterEntity, VehicleSearch>chunk(500)
+            Step step = new StepBuilder("vehicle-profile-reindex-step", jobRepository)
+                    .<VehicleMasterEntity, VehicleSearch>chunk(500, transactionManager)
                     .processor(processor)
                     .reader(reader)
                     .writer(writer)
@@ -63,9 +65,9 @@ public class VehicleProfileReindexBatchServiceImpl implements OnDemandBatchServi
                     .build();
 
             JobExecution jobExecution = jobLauncher.run(createJob(jobCompletionNotificationListener, step), jobParameters);
-            Date start = jobExecution.getCreateTime();
-            Date end = jobExecution.getEndTime();
-            long timeSpent = (end != null) ? end.getTime() - start.getTime() : -1L;
+            LocalDateTime start = jobExecution.getCreateTime();
+            LocalDateTime end = jobExecution.getEndTime();
+            long timeSpent = (end != null) ? end.getLong(ChronoField.MILLI_OF_SECOND) - start.getLong(ChronoField.MILLI_OF_SECOND) : -1L;
             int total = countListener.getCounter();
             log.info("Vehicle Profile Reindex : total {} items,  start time [{}], end time [{}], time spent [{}]",
                     total, start, end, timeSpent);
@@ -79,7 +81,7 @@ public class VehicleProfileReindexBatchServiceImpl implements OnDemandBatchServi
     }
 
     private Job createJob(JobCompletionNotificationListener listener, Step step) {
-        return this.jobBuilderFactory.get("vehicle-profile-reindex-job")
+        return new JobBuilder("vehicle-profile-reindex-job", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .start(step)

@@ -12,18 +12,8 @@ public class ItemCountListener implements ItemWriteListener<VehicleSearch> {
     @Getter
     private int counter = 0;
 
-    @Override
-    public void beforeWrite(@NonNull List list) {
-        //void
-    }
-
-    @Override
-    public void afterWrite(@NonNull List list) {
+    void afterWrite(@NonNull List<VehicleSearch> list) {
         counter += list.size();
     }
 
-    @Override
-    public void onWriteError(@NonNull Exception e, @NonNull List list) {
-        //void
-    }
 }

@@ -2,10 +2,8 @@ package com.jumkid.vehicle.service.batch;
 
 import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.repository.VehicleSearchRepository;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.lang.NonNull;
-
-import java.util.List;
 
 public class VehicleSearchItemWriter implements ItemWriter<VehicleSearch> {
 
@@ -16,8 +14,7 @@ public class VehicleSearchItemWriter implements ItemWriter<VehicleSearch> {
     }
 
     @Override
-    public void write(@NonNull List<? extends VehicleSearch> vehicleSearchList) throws Exception {
-        vehicleSearchRepository.saveAll(vehicleSearchList);
+    public void write(Chunk<? extends VehicleSearch> chunk) throws Exception {
+        vehicleSearchRepository.saveAll(chunk.getItems());
     }
-
 }

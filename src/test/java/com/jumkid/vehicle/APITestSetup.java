@@ -4,21 +4,22 @@ import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.dto.VehicleEngine;
 import com.jumkid.vehicle.service.dto.VehicleTransmission;
-import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class APITestsSetup {
+@Component("apiTestSetup")
+public class APITestSetup {
 
     static String DUMMY_ID = "xxxx-xxxx";
 
-    static Vehicle buildVehicle() {
+    public Vehicle buildVehicle() {
         return buildVehicle(DUMMY_ID);
     }
 
-    static Vehicle buildVehicle(String id) {
+    public Vehicle buildVehicle(String id) {
         return Vehicle.builder()
                 .id(id)
                 .name("test vehicle")
@@ -49,7 +50,7 @@ public class APITestsSetup {
                 .build();
     }
 
-    static List<Vehicle> buildVehicles() {
+    public List<Vehicle> buildVehicles() {
         List<Vehicle> list = new ArrayList<>();
         for (int i=0; i<10; i++) {
             list.add(buildVehicle(DUMMY_ID + "-" + i));

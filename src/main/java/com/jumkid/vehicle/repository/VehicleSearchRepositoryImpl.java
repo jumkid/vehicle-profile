@@ -25,14 +25,14 @@ import java.util.*;
 
 @Slf4j
 @Repository
-public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepository {
+public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
 
     private static final String ES_IDX_ENDPOINT = "vehicle";
     private static final String AGG_NAME = "vehicle-agg";
 
     private final ElasticsearchClient esClient;
 
-    public VehicleSearchRepositoryRepositoryImpl(ElasticsearchClient esClient) {
+    public VehicleSearchRepositoryImpl(ElasticsearchClient esClient) {
         this.esClient = esClient;
     }
 
@@ -99,7 +99,7 @@ public class VehicleSearchRepositoryRepositoryImpl implements VehicleSearchRepos
             Aggregate aggregate = response.aggregations().get(AGG_NAME);
             if (aggregate.isSterms()) {
                 List<StringTermsBucket> termBuckets = aggregate.sterms().buckets().array();
-                return termBuckets.stream().map(StringTermsBucket::key).toList();
+                return termBuckets.stream().map(stringTermsBucket -> stringTermsBucket.key().stringValue()).toList();
             } else
             if (aggregate.isLterms()) {
                 List<LongTermsBucket> termBuckets = aggregate.lterms().buckets().array();
