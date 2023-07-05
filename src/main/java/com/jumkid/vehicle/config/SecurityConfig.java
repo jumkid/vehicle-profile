@@ -22,6 +22,9 @@ public class SecurityConfig {
     @Value("${jwt.token.enable}")
     private boolean enableTokenCheck;
 
+    @Value("${jwt.token.validate}")
+    private boolean enableTokenValidation;
+
     @Value("${jwt.token.introspect.url}")
     private String tokenIntrospectUrl;
 
@@ -41,7 +44,7 @@ public class SecurityConfig {
                         .and()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         .and()
-                        .addFilterBefore(new BearerTokenRequestFilter(enableTokenCheck, tokenIntrospectUrl, restTemplate),
+                        .addFilterBefore(new BearerTokenRequestFilter(enableTokenCheck, enableTokenValidation, tokenIntrospectUrl, restTemplate),
                                 UsernamePasswordAuthenticationFilter.class)
                         .csrf().disable();  // enable this if the authorization service exposure to public
             } catch (Exception e) {

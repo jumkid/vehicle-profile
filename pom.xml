@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.jumkid.vehicle</groupId>
     <artifactId>vehicle-profile</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.3</version>
     <name>vehicle profile management</name>
     <description>vehicle profile management spring boot application</description>
 

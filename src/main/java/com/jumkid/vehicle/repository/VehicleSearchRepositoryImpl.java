@@ -270,7 +270,6 @@ public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
         try {
             DeleteResponse response = esClient.delete(request);
             log.debug("deleted doc with id {}", response.id());
-
         } catch (IOException e) {
             e.printStackTrace();
             log.error("failed to delete doc {} ", e.getMessage());

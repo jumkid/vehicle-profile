@@ -202,11 +202,12 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     @Override
     @Transactional
     public Vehicle saveAsNew(Vehicle vehicle) {
+        vehicle.setId(null);
         Vehicle newVehicle = save(vehicle);
 
         try {
             // call content service to clone media gallery
-            if (newVehicle.getMediaGalleryId() != null) {
+            if (newVehicle.getMediaGalleryId() != null && !newVehicle.getMediaGalleryId().isBlank()) {
                 URI uri = URI.create(internalApiContentVault + internalApiContentVaultClone + "/" + vehicle.getMediaGalleryId());
                 log.debug("calling internal api {}", uri);
                 MultiValueMap<String, String> params = new LinkedMultiValueMap<>();

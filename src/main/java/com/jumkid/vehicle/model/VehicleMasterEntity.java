@@ -2,6 +2,7 @@ package com.jumkid.vehicle.model;
 
 import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.enums.VehicleEngineField;
+import com.jumkid.vehicle.enums.VehiclePricingField;
 import com.jumkid.vehicle.enums.VehicleTransmissionField;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -72,4 +73,9 @@ public class VehicleMasterEntity {
     @JoinColumn(name = VehicleField.Fields.VEHICLE_TRANSMISSION_ID,
             referencedColumnName = VehicleTransmissionField.Fields.ID)
     private VehicleTransmissionEntity vehicleTransmissionEntity;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = VehicleField.Fields.VEHICLE_PRICING_ID,
+            referencedColumnName = VehiclePricingField.Fields.ID)
+    private VehiclePricingEntity vehiclePricingEntity;
 }

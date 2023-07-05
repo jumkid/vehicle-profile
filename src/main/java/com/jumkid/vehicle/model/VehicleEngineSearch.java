@@ -26,4 +26,6 @@ public class VehicleEngineSearch implements Serializable {
 
     private String manufacturerEngineCode;
 
+    private Float displacement;
+
 }

@@ -42,6 +42,8 @@ public class VehicleSearch implements Serializable {
 
     private VehicleTransmissionSearch vehicleTransmission;
 
+    private VehiclePricingSearch vehiclePricing;
+
     private String createdBy;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = YYYYMMDDTHHMMSS3S)

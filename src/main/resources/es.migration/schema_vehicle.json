@@ -23,6 +23,13 @@
       "category": {
         "type": "keyword"
       },
+      "vehiclePricing": {
+        "properties": {
+          "msrp": {
+            "type": "float"
+          }
+        }
+      },
       "vehicleEngine": {
         "properties": {
           "name": {

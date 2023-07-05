@@ -32,6 +32,7 @@ CREATE TABLE vehicle_master (
     trim_level VARCHAR(32),
     vehicle_engine_id INTEGER,
     vehicle_transmission_id INTEGER,
+    vehicle_pricing_id INTEGER,
     media_gallery_id VARCHAR(100),
     category VARCHAR(64),
 
@@ -40,5 +41,11 @@ CREATE TABLE vehicle_master (
     modified_by VARCHAR(255),
     modification_date DATETIME(3),
     FOREIGN KEY (vehicle_engine_id) REFERENCES vehicle_engine(id) ON DELETE CASCADE,
-    FOREIGN KEY (vehicle_transmission_id) REFERENCES vehicle_transmission(id) ON DELETE CASCADE
+    FOREIGN KEY (vehicle_transmission_id) REFERENCES vehicle_transmission(id) ON DELETE CASCADE,
+    FOREIGN KEY (vehicle_pricing_id) REFERENCES vehicle_pricing(id) ON DELETE CASCADE
+);
+
+CREATE TABLE vehicle_pricing (
+     id INTEGER AUTO_INCREMENT PRIMARY KEY,
+     msrp FLOAT
 )

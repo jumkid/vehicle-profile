@@ -15,11 +15,13 @@ public interface VehicleSearchMapper {
 
     @Mapping(target="vehicleEngine", source="entity.vehicleEngineEntity")
     @Mapping(target="vehicleTransmission", source="entity.vehicleTransmissionEntity")
+    @Mapping(target="vehiclePricing", source="entity.vehiclePricingEntity")
     @Mapping(target="id", source = "entity.id")
     VehicleSearch entityToSearchMeta(VehicleMasterEntity entity);
 
     @Mapping(target="vehicleEngine", source="dto.vehicleEngine")
     @Mapping(target="vehicleTransmission", source="dto.vehicleTransmission")
+    @Mapping(target="vehiclePricing", source="dto.vehiclePricing")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     VehicleSearch dtoToSearch(Vehicle dto);
 

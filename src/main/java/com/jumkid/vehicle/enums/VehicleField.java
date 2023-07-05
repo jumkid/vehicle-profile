@@ -11,6 +11,7 @@ public enum VehicleField {
 
     @FieldNameConstants.Include VEHICLE_ENGINE_ID("vehicle_engine_id"),
     @FieldNameConstants.Include VEHICLE_TRANSMISSION_ID("vehicle_transmission_id"),
+    @FieldNameConstants.Include VEHICLE_PRICING_ID("vehicle_pricing_id"),
 
     @FieldNameConstants.Include NAME("name"),
     @FieldNameConstants.Include MAKE("make"),
