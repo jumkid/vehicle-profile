@@ -203,6 +203,16 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     @Transactional
     public Vehicle saveAsNew(Vehicle vehicle) {
         vehicle.setId(null);
+        if (vehicle.getVehicleEngine() != null) {
+            vehicle.getVehicleEngine().setId(null);
+        }
+        if (vehicle.getVehicleTransmission() != null) {
+            vehicle.getVehicleTransmission().setId(null);
+        }
+        if (vehicle.getVehiclePricing() != null) {
+            vehicle.getVehiclePricing().setId(null);
+        }
+
         Vehicle newVehicle = save(vehicle);
 
         try {

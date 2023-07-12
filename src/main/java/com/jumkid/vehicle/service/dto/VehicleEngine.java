@@ -7,11 +7,11 @@ import lombok.*;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-@EqualsAndHashCode(of = {"vehicleEngineId"}, callSuper = false)
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder
 public class VehicleEngine {
 
-    private Long vehicleEngineId;
+    private Long id;
 
     private String name;
 

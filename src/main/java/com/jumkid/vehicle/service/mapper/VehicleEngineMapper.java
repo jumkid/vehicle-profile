@@ -7,7 +7,6 @@ import org.mapstruct.*;
 @Mapper(componentModel="spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface VehicleEngineMapper {
 
-    @Mapping(target="vehicleEngineId", source = "entity.id")
     VehicleEngine entityToDTO( VehicleEngineEntity entity);
 
     VehicleEngineEntity dtoToEntity( VehicleEngine dto);

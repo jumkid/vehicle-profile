@@ -54,7 +54,7 @@ public class VehicleController {
 
     @PostMapping("/save-as-new")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE') && @vehicleAccessPermissionAuthorizer.isPublic(#vehicle)")
+    @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE')")
     public Vehicle saveAsNew(@NotNull @Valid @RequestBody Vehicle vehicle){
         return vehicleMasterService.saveAsNew(vehicle);
     }
