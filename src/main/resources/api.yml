@@ -11,21 +11,18 @@ info:
   license:
     name: Jumkid Public License
     url: 'http://license.jumkid.com'
-
 servers:
   - description: Testing
     url: 'http://localhost:8084'
   - description: Live production
     url: 'http://api.jumkid.com'
-
 tags:
   - name: v1
     description: API for version 0.9.1
   - name: test
     description: API for test
-
 paths:
-  '/vehicles':
+  /vehicles:
     get:
       tags:
         - v1
@@ -55,8 +52,7 @@ paths:
           $ref: '#/components/responses/201-created'
         '403':
           $ref: '#/components/responses/403-access-deny'
-  
-  '/vehicles/save-as-new':
+  /vehicles/save-as-new:
     post:
       tags:
         - v1
@@ -74,8 +70,7 @@ paths:
           $ref: '#/components/responses/201-created'
         '403':
           $ref: '#/components/responses/403-access-deny'
-
-  '/vehicles/search':
+  /vehicles/search:
     get:
       tags:
         - v1
@@ -106,8 +101,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200-vehicles'
-
-  '/vehicles/search-public':
+  /vehicles/search-public:
     get:
       tags:
         - v1
@@ -137,9 +131,8 @@ paths:
             type: integer
       responses:
         '200':
-          $ref: '#/components/responses/200-vehicles'        
- 
-  '/vehicle/search-matchers':
+          $ref: '#/components/responses/200-vehicles'
+  /vehicles/search-matchers:
     post:
       tags:
         - v1
@@ -161,7 +154,7 @@ paths:
           required: true
           schema:
             type: integer
-      requestBody:      
+      requestBody:
         description: match fields name and value list
         content:
           application/json:
@@ -172,14 +165,13 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200-vehicles'
-
-  '/vehicle/search-aggregation':
+  /vehicles/search-aggregation:
     post:
       tags:
         - v1
         - test
       operationId: searchForAggregation
-      description: aggregation search for certain field 
+      description: aggregation search for certain field
       security:
         - Authorization: []
       parameters:
@@ -194,8 +186,8 @@ paths:
           in: query
           required: true
           schema:
-            type: number    
-      requestBody:      
+            type: number
+      requestBody:
         description: match fields name and value list
         content:
           application/json:
@@ -213,7 +205,32 @@ paths:
                 items:
                   schema:
                     type: string
-
+                    
+  '/vehicles/{id}/gallery-copy':
+    post:
+      tags:
+        - v1
+        - test
+      operationId: copyGallery
+      description: copy a give media gallery to target vehicle
+      security:
+        - Authorization: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - name: mediaGalleryId
+          description: source media gallery id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                
   '/vehicles/{id}':
     get:
       tags:
@@ -267,8 +284,7 @@ paths:
           description: NOT_FOUND
         '403':
           $ref: '#/components/responses/403-access-deny'
-          
-  '/vehicles/import':
+  /vehicles/import:
     post:
       tags:
         - v1
@@ -295,25 +311,23 @@ paths:
             application/json:
               schema:
                 type: integer
-
-  '/vehicles/reindex':
+  /vehicles/reindex:
     get:
       tags:
         - v1
       operationId: reindex
       description: reindex vehicle data
       security:
-        - Authorization: [ ]
+        - Authorization: []
       responses:
         '200':
           description: reindex vehicle data
-        '403': 
+        '403':
           description: FORBIDDEN
           content:
             application/json:
               schema:
                 $ref: 'https://raw.githubusercontent.com/jumkid/share-jar/master/src/main/resources/share.yaml#/components/schemas/CustomErrorResponse'
-
 components:
   schemas:
     Vehicle:
@@ -389,11 +403,10 @@ components:
     VehicleFieldValuePair:
       description: key value pair for vehicle field
       properties:
-        field: 
+        field:
           type: string
         value:
           type: string | number
-
   responses:
     200-vehicle:
       description: OK
@@ -408,7 +421,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/Vehicle'          
+              $ref: '#/components/schemas/Vehicle'
     403-access-deny:
       description: FORBIDDEN
       content:

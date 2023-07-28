@@ -4,6 +4,7 @@ import com.jumkid.share.controller.response.CustomErrorResponse;
 import com.jumkid.share.exception.ModificationDatetimeNotFoundException;
 import com.jumkid.share.exception.ModificationDatetimeOutdatedException;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
+import com.jumkid.vehicle.exception.VehicleGalleryNoEmptyException;
 import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -97,6 +98,15 @@ public class ExceptionHandlingAdvice {
         return CustomErrorResponse.builder()
                 .timestamp(Calendar.getInstance().getTime())
                 .details(vie.getImportErrors())
+                .build();
+    }
+
+    @ExceptionHandler({VehicleGalleryNoEmptyException.class})
+    @ResponseStatus(CONFLICT)
+    public CustomErrorResponse handleVehicleGalleryNoEmptyException(VehicleGalleryNoEmptyException ex) {
+        return CustomErrorResponse.builder()
+                .timestamp(Calendar.getInstance().getTime())
+                .message(ex.getMessage())
                 .build();
     }
 }

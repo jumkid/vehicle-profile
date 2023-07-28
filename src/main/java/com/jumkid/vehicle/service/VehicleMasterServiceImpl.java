@@ -8,6 +8,7 @@ import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
 import com.jumkid.vehicle.enums.VehicleField;
+import com.jumkid.vehicle.exception.VehicleGalleryNoEmptyException;
 import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import com.jumkid.vehicle.exception.VehicleSearchException;
@@ -25,6 +26,7 @@ import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -218,12 +220,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         try {
             // call content service to clone media gallery
             if (newVehicle.getMediaGalleryId() != null && !newVehicle.getMediaGalleryId().isBlank()) {
-                URI uri = URI.create(internalApiContentVault + internalApiContentVaultClone + "/" + vehicle.getMediaGalleryId());
-                log.debug("calling internal api {}", uri);
-                MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-                params.add("title", newVehicle.getName());
-                MediaFile newGallery = internalRestApiClient.post(uri, params, MediaFile.class);
-                log.debug("clone to new gallery with uuid {}", newGallery.getUuid());
+                MediaFile newGallery = cloneMediaGallery(vehicle.getMediaGalleryId(), null, newVehicle.getName());
 
                 if (newGallery.getUuid() != null) {
                     return update(newVehicle.getId(),
@@ -259,6 +256,30 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
         log.debug("updated user vehicle search index rec {}", count);
 
         return vehicleMapper.entityToDto(updateEntity);
+    }
+
+    @Override
+    public String cloneMediaGalleryToVehicle(String vehicleId, String sourceMediaGalleryId) throws VehicleNotFoundException {
+        VehicleMasterEntity updateEntity = vehicleMasterRepository.findById(vehicleId)
+                .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
+        MediaFile targetGallery;
+        String toMediaGalleryId = updateEntity.getMediaGalleryId();
+        if (toMediaGalleryId != null && !toMediaGalleryId.isBlank()) {
+            targetGallery = cloneMediaGallery(sourceMediaGalleryId, toMediaGalleryId, updateEntity.getName());
+        } else {
+            targetGallery = cloneMediaGallery(sourceMediaGalleryId, null, updateEntity.getName());
+            String newGalleryId = targetGallery.getUuid();
+
+            if (newGalleryId != null) {
+                update(vehicleId,
+                        Vehicle.builder()
+                                .mediaGalleryId(newGalleryId)
+                                .modificationDate(updateEntity.getModificationDate())
+                                .build());
+            }
+        }
+
+        return targetGallery.getUuid();
     }
 
     @Override
@@ -298,6 +319,29 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     private String getCurrentUserId() {
         UserProfile userProfile = userProfileManager.fetchUserProfile();
         return userProfile.getId();
+    }
+
+    private MediaFile cloneMediaGallery(String sourceMediaGalleryId, String toMediaGalleryId, String title)
+            throws VehicleGalleryNoEmptyException{
+        URI uri = URI.create(internalApiContentVault + String.format(internalApiContentVaultClone, sourceMediaGalleryId));
+        log.debug("calling internal api {}", uri);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("title", title);
+        if (toMediaGalleryId != null) {
+            params.add("toMediaGalleryId", toMediaGalleryId);
+        }
+        try {
+            MediaFile targetGallery = internalRestApiClient.post(uri, params, MediaFile.class);
+            log.debug("clone to target gallery with uuid {}", targetGallery.getUuid());
+
+            return targetGallery;
+        } catch (InternalRestApiException ex) {
+            if (ex.getStatusCode().value() == HttpStatus.CONFLICT.value()) {
+                throw new VehicleGalleryNoEmptyException();
+            }
+            log.error("Failed to call internal api to clone gallery {}", ex.getMessage());
+            return MediaFile.builder().content(ex.getMessage()).build();
+        }
     }
 
 }

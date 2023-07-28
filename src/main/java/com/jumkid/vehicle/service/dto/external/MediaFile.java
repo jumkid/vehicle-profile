@@ -3,15 +3,15 @@ package com.jumkid.vehicle.service.dto.external;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jumkid.share.security.AccessScope;
 import com.jumkid.share.service.dto.GenericDTO;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import jakarta.validation.constraints.NotBlank;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@Builder
 @EqualsAndHashCode(of = {"uuid"}, callSuper = false)
 public class MediaFile extends GenericDTO {
 

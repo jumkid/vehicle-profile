@@ -44,6 +44,8 @@ public interface VehicleMasterService {
 
     Vehicle update(String vehicleId, Vehicle vehicle);
 
+    String cloneMediaGalleryToVehicle(String vehicleId, String sourceMediaGalleryId) throws VehicleNotFoundException;
+
     void delete(String vehicleId);
 
     Integer importVehicleMaster(InputStream is) throws VehicleImportException;

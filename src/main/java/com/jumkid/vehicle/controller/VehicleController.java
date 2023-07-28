@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 @Slf4j
@@ -50,6 +51,15 @@ public class VehicleController {
     @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE')")
     public Vehicle save(@NotNull @Valid @RequestBody Vehicle vehicle){
         return vehicleMasterService.save(vehicle);
+    }
+
+    @PostMapping("/{id}/gallery-copy")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE')" +
+            " && @vehicleAccessPermissionAuthorizer.isOwner(#id)")
+    public String copyGallery(@NotNull @Valid @PathVariable String id,
+                               @NotNull @RequestParam(required = true) String sourceMediaGalleryId){
+        return vehicleMasterService.cloneMediaGalleryToVehicle(id, sourceMediaGalleryId);
     }
 
     @PostMapping("/save-as-new")
