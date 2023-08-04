@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 
 import jakarta.validation.ConstraintViolation;
@@ -30,7 +31,7 @@ public class ExceptionHandlingAdvice {
 
     @ExceptionHandler({UserProfileNotFoundException.class})
     @ResponseStatus(FORBIDDEN)
-    public CustomErrorResponse handle(Exception ex) {
+    public CustomErrorResponse handle(UserProfileNotFoundException ex) {
         log.info("User profile could not be found.", ex);
         return new CustomErrorResponse(Calendar.getInstance().getTime(), ex.getMessage());
     }
@@ -53,6 +54,17 @@ public class ExceptionHandlingAdvice {
                 .timestamp(Calendar.getInstance().getTime())
                 .property(List.of(e.getParameterName()))
                 .details(List.of(Objects.requireNonNull(e.getMessage())))
+                .build();
+    }
+
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public CustomErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        return CustomErrorResponse.builder()
+                .timestamp(Calendar.getInstance().getTime())
+                .message(ex.getParameter().getParameterName())
+                .property(List.of(Objects.requireNonNull(ex.getParameter().getParameterName())))
+                .details(List.of(Objects.requireNonNull(ex.getMessage())))
                 .build();
     }
 

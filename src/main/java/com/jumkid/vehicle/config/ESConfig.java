@@ -29,7 +29,9 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 
 @Slf4j
 @Configuration
@@ -94,12 +96,18 @@ public class ESConfig {
     private SSLContext buildContext() throws KeyStoreException, IOException, CertificateException,
             NoSuchAlgorithmException, KeyManagementException {
         Path trustStorePath = Paths.get(esKeystorePath);
-        KeyStore truststore = KeyStore.getInstance(esKeystoreFormat);
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        KeyStore trustStore = KeyStore.getInstance(esKeystoreFormat);
+
+        Certificate trustedCa;
         try (InputStream is = Files.newInputStream(trustStorePath)) {
-            truststore.load(is, esKeyStorePass.toCharArray());
+            trustedCa = factory.generateCertificate(is);
         }
+        trustStore.load(null, null);
+        trustStore.setCertificateEntry("ca", trustedCa);
+
         SSLContextBuilder sslBuilder = SSLContexts.custom()
-                .loadTrustMaterial(truststore, null);
+                .loadTrustMaterial(trustStore, null);
         return sslBuilder.build();
     }
 }

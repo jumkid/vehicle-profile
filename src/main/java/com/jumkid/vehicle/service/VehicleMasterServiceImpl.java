@@ -7,6 +7,7 @@ import com.jumkid.share.service.InternalRestApiClient;
 import com.jumkid.share.service.dto.PagingResults;
 import com.jumkid.share.user.UserProfile;
 import com.jumkid.share.user.UserProfileManager;
+import com.jumkid.vehicle.enums.KeywordMode;
 import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.exception.VehicleGalleryNoEmptyException;
 import com.jumkid.vehicle.exception.VehicleImportException;
@@ -104,20 +105,20 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     }
 
     @Override
-    public PagingResults<Vehicle> searchUserVehicles(final String keyword, final Integer size, final Integer page)
+    public PagingResults<Vehicle> searchUserVehicles(final String keyword, final KeywordMode keywordMode, final Integer size, final Integer page)
             throws VehicleSearchException{
         String userId = getCurrentUserId();
         return searchByCriteria(keyword, size, page, (String k, Integer s, Integer p) ->
-                vehicleSearchRepository.searchByUser(smartKeywordHandler.andSplit(k), s, p, userId)
+                vehicleSearchRepository.searchByUser(parseKeyword(k, keywordMode), s, p, userId)
         );
     }
 
     @Override
-    public PagingResults<Vehicle> searchPublicVehicles(final String keyword, final Integer size, final Integer page)
+    public PagingResults<Vehicle> searchPublicVehicles(final String keyword, final KeywordMode keywordMode, final Integer size, final Integer page)
             throws VehicleSearchException {
         return searchByCriteria(keyword, size, page, (String k, Integer s, Integer p) ->
                 vehicleSearchRepository
-                        .searchByAccessScope(smartKeywordHandler.andSplit(k), s, p, AccessScope.PUBLIC)
+                        .searchByAccessScope(parseKeyword(k, keywordMode), s, p, AccessScope.PUBLIC)
         );
     }
 
@@ -319,6 +320,14 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     private String getCurrentUserId() {
         UserProfile userProfile = userProfileManager.fetchUserProfile();
         return userProfile.getId();
+    }
+
+    private String parseKeyword(String keyword, KeywordMode keywordMode) {
+        if (keywordMode == null || keywordMode.equals(KeywordMode.KEYWORD)) {
+            return smartKeywordHandler.andSplit(keyword);
+        } else {
+            return keyword;
+        }
     }
 
     private MediaFile cloneMediaGallery(String sourceMediaGalleryId, String toMediaGalleryId, String title)

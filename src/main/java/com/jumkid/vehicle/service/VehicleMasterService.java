@@ -1,6 +1,7 @@
 package com.jumkid.vehicle.service;
 
 import com.jumkid.share.service.dto.PagingResults;
+import com.jumkid.vehicle.enums.KeywordMode;
 import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
@@ -15,10 +16,10 @@ public interface VehicleMasterService {
 
     List<Vehicle> getUserVehicles();
 
-    PagingResults<Vehicle> searchUserVehicles(final String keyword, final Integer size, final Integer page)
+    PagingResults<Vehicle> searchUserVehicles(final String keyword, final KeywordMode keywordMode, final Integer size, final Integer page)
             throws VehicleSearchException;
 
-    PagingResults<Vehicle> searchPublicVehicles(final String keyword, final Integer size, final Integer page)
+    PagingResults<Vehicle> searchPublicVehicles(final String keyword, final KeywordMode keywordMode, final Integer size, final Integer page)
             throws VehicleSearchException;
 
     PagingResults<Vehicle> searchByCriteria(final String keyword,

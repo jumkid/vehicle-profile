@@ -3,6 +3,7 @@ package com.jumkid.vehicle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jumkid.share.security.AccessScope;
 import com.jumkid.share.service.dto.PagingResults;
+import com.jumkid.vehicle.enums.KeywordMode;
 import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.model.VehicleMasterEntity;
 import com.jumkid.vehicle.model.VehicleSearch;
@@ -179,6 +180,7 @@ public class VehicleMasterAPITests {
 
         mockMvc.perform(get("/vehicles/search")
                 .param("keyword", keyword)
+                .param("keywordMode", KeywordMode.KEYWORD.value())
                 .param("size", size.toString())
                 .param("page", page.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -191,6 +193,7 @@ public class VehicleMasterAPITests {
 
         mockMvc.perform(get("/vehicles/search-public")
                 .param("keyword", keyword)
+                .param("keywordMode", KeywordMode.KEYWORD.value())
                 .param("size", size.toString())
                 .param("page", page.toString())
                 .contentType(MediaType.APPLICATION_JSON))

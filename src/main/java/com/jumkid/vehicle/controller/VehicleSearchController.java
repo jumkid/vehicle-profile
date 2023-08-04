@@ -2,6 +2,7 @@ package com.jumkid.vehicle.controller;
 
 import com.jumkid.share.controller.response.PagingResponse;
 import com.jumkid.share.service.dto.PagingResults;
+import com.jumkid.vehicle.enums.KeywordMode;
 import com.jumkid.vehicle.enums.VehicleField;
 import com.jumkid.vehicle.service.VehicleMasterService;
 import com.jumkid.vehicle.service.dto.Vehicle;
@@ -35,11 +36,12 @@ public class VehicleSearchController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('GUEST_ROLE', 'USER_ROLE', 'ADMIN_ROLE')")
     public PagingResponse<Vehicle> searchPublicVehicles(@NotNull @Valid @RequestParam String keyword,
+                                                        @Valid @RequestParam(required = false) KeywordMode keywordMode,
                                                      @Min(1) @Valid @RequestParam Integer size,
                                                      @Min(1) @Valid @RequestParam Integer page) {
         log.debug("search public vehicle by keyword {}, size {}", keyword, size);
 
-        PagingResults<Vehicle> results = vehicleMasterService.searchPublicVehicles(keyword, size, page);
+        PagingResults<Vehicle> results = vehicleMasterService.searchPublicVehicles(keyword, keywordMode, size, page);
 
         return PagingResponse.<Vehicle>builder()
                 .success(true)
@@ -54,11 +56,12 @@ public class VehicleSearchController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('USER_ROLE', 'ADMIN_ROLE')")
     public PagingResponse<Vehicle> searchUserVehicles(@NotNull @Valid @RequestParam String keyword,
+                                                      @Valid @RequestParam(required = false) KeywordMode keywordMode,
                                                      @Min(1) @Valid @RequestParam Integer size,
                                                      @Min(1) @Valid @RequestParam Integer page) {
         log.debug("search user vehicle by keyword {}, size {}", keyword, size);
 
-        PagingResults<Vehicle> results = vehicleMasterService.searchUserVehicles(keyword, size, page);
+        PagingResults<Vehicle> results = vehicleMasterService.searchUserVehicles(keyword, keywordMode, size, page);
 
         return PagingResponse.<Vehicle>builder()
                 .success(true)

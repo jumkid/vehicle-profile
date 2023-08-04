@@ -86,6 +86,7 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/keywordMode'    
         - name: size
           description: search result size
           in: query
@@ -117,6 +118,7 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/keywordMode'    
         - name: size
           description: search result size
           in: query
@@ -400,6 +402,11 @@ components:
       enum:
         - public
         - private
+    KeywordMode:
+      type: string
+      enum:
+        - KEYWORD
+        - QUERYSTRING     
     VehicleFieldValuePair:
       description: key value pair for vehicle field
       properties:
@@ -444,6 +451,13 @@ components:
       required: true
       schema:
         type: string
+    keywordMode:
+      name: keywordMode
+      description: search keyword Mode
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/KeywordMode'   
   requestBodies:
     vehicle:
       content:

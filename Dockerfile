@@ -4,6 +4,7 @@ ARG env
 # local file storage path
 RUN mkdir -p /opt/vehicle-profile/logs
 
+COPY certs/ca.crt /opt/vehicle-profile/certs/ca.crt
 COPY src/main/resources/application.${env}.properties /opt/vehicle-profile/application.properties
 COPY target/vehicle-profile-*.jar /opt/vehicle-profile/vehicle-profile.jar
 
