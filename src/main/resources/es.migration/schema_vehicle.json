@@ -5,10 +5,20 @@
         "type": "text"
       },
       "make": {
-        "type": "text"
+        "type": "text",
+        "fields": {
+          "raw": {
+            "type":  "keyword"
+          }
+        }
       },
       "model": {
-        "type": "text"
+        "type": "text",
+        "fields": {
+          "raw": {
+            "type":  "keyword"
+          }
+        }
       },
       "modelYear": {
         "type": "integer",
@@ -18,10 +28,20 @@
         "type": "keyword"
       },
       "trimLevel": {
-        "type": "text"
+        "type": "text",
+        "fields": {
+          "raw": {
+            "type":  "keyword"
+          }
+        }
       },
       "category": {
-        "type": "text"
+        "type": "text",
+        "fields": {
+          "raw": {
+            "type":  "keyword"
+          }
+        }
       },
       "vehiclePricing": {
         "properties": {
@@ -36,7 +56,12 @@
             "type": "text"
           },
           "type": {
-            "type": "keyword"
+            "type": "text",
+            "fields": {
+              "raw": {
+                "type":  "keyword"
+              }
+            }
           },
           "cylinder": {
             "type": "integer"
@@ -45,7 +70,12 @@
             "type": "float"
           },
           "fuelType": {
-            "type": "text"
+            "type": "text",
+            "fields": {
+              "raw": {
+                "type":  "keyword"
+              }
+            }
           },
           "horsepower": {
             "type": "integer"
@@ -60,7 +90,12 @@
             "type": "integer"
           },
           "manufacturerEngineCode": {
-            "type": "text"
+            "type": "text",
+            "fields": {
+              "raw": {
+                "type":  "keyword"
+              }
+            }
           }
         }
       },
@@ -70,13 +105,28 @@
             "type": "text"
           },
           "type": {
-            "type": "keyword"
+            "type": "keyword",
+            "fields": {
+              "raw": {
+                "type":  "keyword"
+              }
+            }
           },
           "automaticType": {
-            "type": "text"
+            "type": "text",
+            "fields": {
+              "raw": {
+                "type":  "keyword"
+              }
+            }
           },
           "drivetrain": {
-            "type": "text"
+            "type": "text",
+            "fields": {
+              "raw": {
+                "type":  "keyword"
+              }
+            }
           },
           "availability": {
             "type": "keyword"

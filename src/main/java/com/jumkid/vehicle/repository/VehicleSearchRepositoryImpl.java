@@ -18,6 +18,7 @@ import com.jumkid.vehicle.exception.VehicleSearchException;
 import com.jumkid.vehicle.model.VehicleSearch;
 import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -29,6 +30,9 @@ public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
 
     private static final String ES_IDX_ENDPOINT = "vehicle";
     private static final String AGG_NAME = "vehicle-agg";
+
+    @Value("#{${elasticsearch.aggregation.fields.mapping}}")
+    private Map<String, String> aggregationFieldsMapping;
 
     private final ElasticsearchClient esClient;
 
@@ -93,7 +97,7 @@ public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
                     .index(ES_IDX_ENDPOINT)
                     .size(0) // do not return hits
                     .query(boolQuery)
-                    .aggregations(AGG_NAME, aggBuilder -> aggBuilder.terms(t -> t.field(field.value()).size(size))),
+                    .aggregations(AGG_NAME, aggBuilder -> aggBuilder.terms(t -> t.field(getAggFieldName(field)).size(size))),
                     VehicleSearch.class);
 
             Aggregate aggregate = response.aggregations().get(AGG_NAME);
@@ -115,6 +119,11 @@ public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
             throw new VehicleSearchException("failed to search vehicle profiles");
         }
         return Collections.emptyList();
+    }
+
+    private String getAggFieldName(VehicleField field) {
+        String key = field.value();
+        return aggregationFieldsMapping.getOrDefault(key, key);
     }
 
     private PagingResults<VehicleSearch> searchWithKeywordAndFilter(String keyword,
