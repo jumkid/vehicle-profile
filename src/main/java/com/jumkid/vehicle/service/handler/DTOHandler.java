@@ -36,7 +36,8 @@ public class DTOHandler {
 
             if (dto.getModificationDate() == null) { throw new ModificationDatetimeNotFoundException(); }
 
-            if (!oldEntity.getModificationDate().truncatedTo(ChronoUnit.MILLIS)
+            if (oldEntity.getModificationDate() != null
+                    && !oldEntity.getModificationDate().truncatedTo(ChronoUnit.MILLIS)
                     .equals(dto.getModificationDate().truncatedTo(ChronoUnit.MILLIS))) {
                 throw new ModificationDatetimeOutdatedException();
             }

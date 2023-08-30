@@ -165,7 +165,8 @@ public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
 
         Query query;
         for (VehicleFieldValuePair<String> fieldValuePair : matchFields) {
-            query = MatchQuery.of(m -> m.field(fieldValuePair.getField().value()).query(fieldValuePair.getValue()))
+            query = MatchQuery
+                    .of(m -> m.field(fieldValuePair.getField().value()).query(fieldValuePair.getValue()))
                     ._toQuery();
             matchQueries.add(query);
         }
@@ -173,14 +174,16 @@ public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
     }
 
     private Query getAccessScopeQuery(AccessScope accessScope) {
-        return MatchQuery.of(m -> m.field(VehicleField.ACCESSSCOPE.value()).query(accessScope.value())
-        )._toQuery();
+        return MatchQuery
+                .of(m -> m.field(VehicleField.ACCESSSCOPE.value()).query(accessScope.value()))
+                ._toQuery();
     }
 
     private SortOptions getSortOption() {
         //sort by model year
-        return SortOptions.of(soBuilder -> soBuilder.field(
-                FieldSort.of(fs->fs.field(VehicleField.MODELYEAR.value()).order(SortOrder.Desc))));
+        return SortOptions
+                .of(soBuilder -> soBuilder.field(FieldSort
+                        .of(fs->fs.field(VehicleField.CREATIONDATE.value()).order(SortOrder.Desc))));
     }
 
     private Integer getFrom(Integer size, Integer page){

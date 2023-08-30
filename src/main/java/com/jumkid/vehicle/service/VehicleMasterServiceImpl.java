@@ -98,7 +98,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     public List<Vehicle> getUserVehicles() {
         String userId = getCurrentUserId();
 
-        List<VehicleMasterEntity> vehicleMasterEntities = vehicleMasterRepository.findByCreatedBy(userId);
+        List<VehicleMasterEntity> vehicleMasterEntities = vehicleMasterRepository.findByCreatedByOrderByCreationDate(userId);
         log.debug("Found {} vehicles for user {}", vehicleMasterEntities.size(), userId);
 
         return vehicleMapper.entitiesToDTOs(vehicleMasterEntities);

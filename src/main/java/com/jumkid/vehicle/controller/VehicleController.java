@@ -33,7 +33,6 @@ public class VehicleController {
     @ResponseStatus(HttpStatus.OK)
     public List<Vehicle> getUserVehicles() {
         log.debug("fetch all user vehicles");
-
         return vehicleMasterService.getUserVehicles();
     }
 

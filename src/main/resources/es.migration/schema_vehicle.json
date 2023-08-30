@@ -5,10 +5,10 @@
         "type": "text"
       },
       "make": {
-        "type": "keyword"
+        "type": "text"
       },
       "model": {
-        "type": "keyword"
+        "type": "text"
       },
       "modelYear": {
         "type": "integer",
@@ -18,10 +18,10 @@
         "type": "keyword"
       },
       "trimLevel": {
-        "type": "keyword"
+        "type": "text"
       },
       "category": {
-        "type": "keyword"
+        "type": "text"
       },
       "vehiclePricing": {
         "properties": {
@@ -45,7 +45,7 @@
             "type": "float"
           },
           "fuelType": {
-            "type": "keyword"
+            "type": "text"
           },
           "horsepower": {
             "type": "integer"
@@ -60,7 +60,7 @@
             "type": "integer"
           },
           "manufacturerEngineCode": {
-            "type": "keyword"
+            "type": "text"
           }
         }
       },
@@ -73,10 +73,10 @@
             "type": "keyword"
           },
           "automaticType": {
-            "type": "keyword"
+            "type": "text"
           },
           "drivetrain": {
-            "type": "keyword"
+            "type": "text"
           },
           "availability": {
             "type": "keyword"
