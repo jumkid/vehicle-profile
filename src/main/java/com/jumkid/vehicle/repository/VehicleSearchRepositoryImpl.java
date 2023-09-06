@@ -174,8 +174,9 @@ public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
 
         Query query;
         for (VehicleFieldValuePair<String> fieldValuePair : matchFields) {
+            String matchFieldName = getAggFieldName(fieldValuePair.getField());
             query = MatchQuery
-                    .of(m -> m.field(fieldValuePair.getField().value()).query(fieldValuePair.getValue()))
+                    .of(m -> m.field(matchFieldName).query(fieldValuePair.getValue()))
                     ._toQuery();
             matchQueries.add(query);
         }
