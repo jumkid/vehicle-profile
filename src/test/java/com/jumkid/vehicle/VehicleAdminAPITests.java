@@ -1,7 +1,7 @@
 package com.jumkid.vehicle;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -22,12 +21,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:10092", "port=10092" })
-public class VehicleAdminAPITests {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class VehicleAdminAPITests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,7 +37,7 @@ public class VehicleAdminAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenNoAdminCall_shouldGet401Forbidden() throws Exception {
+    void whenNoAdminCall_shouldGet401Forbidden() throws Exception {
         mockMvc.perform(get("/vehicles/reindex")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
@@ -46,7 +45,7 @@ public class VehicleAdminAPITests {
 
     @Test
     @WithMockUser(username="admin", password="admin", authorities="ADMIN_ROLE")
-    public void whenAdminCall_shouldRunReindexSuccessfully() throws Exception {
+    void whenAdminCall_shouldRunReindexSuccessfully() throws Exception {
         when(jobLauncher.run(any(Job.class), any(JobParameters.class))).thenReturn(any(JobExecution.class));
 
         mockMvc.perform(get("/vehicles/reindex")

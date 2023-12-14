@@ -13,10 +13,9 @@ import com.jumkid.vehicle.service.dto.Vehicle;
 import com.jumkid.vehicle.service.dto.VehicleFieldValuePair;
 import com.jumkid.vehicle.service.mapper.VehicleMapper;
 import com.jumkid.vehicle.service.mapper.VehicleSearchMapper;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,13 +24,13 @@ import org.springframework.http.MediaType;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -39,12 +38,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @DirtiesContext
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:10092", "port=10092" })
 @AutoConfigureMockMvc
-public class VehicleMasterAPITests {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class VehicleMasterAPITests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -67,8 +66,8 @@ public class VehicleMasterAPITests {
     @MockBean
     private VehicleSearchRepository vehicleSearchRepository;
 
-    @Before
-    public void setup() {
+    @BeforeAll
+    void setup() {
         try {
             vehicle = apiTestSetup.buildVehicle();
             vehicleList = apiTestSetup.buildVehicles();
@@ -81,13 +80,13 @@ public class VehicleMasterAPITests {
                     .thenReturn(vehicleSearchMapper.entityToSearchMeta(entity));
 
         } catch (Exception e) {
-            Assert.fail();
+            fail();
         }
     }
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenGivenVehicle_shouldSaveVehicleEntity() throws Exception{
+    void whenGivenVehicle_shouldSaveVehicleEntity() throws Exception{
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsBytes(vehicle)))
@@ -101,7 +100,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenGivenNull_shouldGetBadRequest() throws Exception{
+    void whenGivenNull_shouldGetBadRequest() throws Exception{
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsBytes(null)))
@@ -110,7 +109,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenGivenNullProperties_shouldGetBadRequest() throws Exception{
+    void whenGivenNullProperties_shouldGetBadRequest() throws Exception{
         Vehicle vehicleWithNullProperties = Vehicle.builder().build();
         mockMvc.perform(post("/vehicles")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +120,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenGivenVehicleWithId_shouldUpdateVehicleEntity() throws Exception{
+    void whenGivenVehicleWithId_shouldUpdateVehicleEntity() throws Exception{
         Vehicle updateVehicle = Vehicle.builder()
                 .id(vehicle.getId())
                 .make("honda")
@@ -149,7 +148,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenGivenVehicleId_shouldDeleteVehicleEntity() throws Exception {
+    void whenGivenVehicleId_shouldDeleteVehicleEntity() throws Exception {
         when(vehicleMasterRepository.findById(vehicle.getId())).thenReturn(Optional.of(entity));
 
         mockMvc.perform(delete("/vehicles/" + vehicle.getId())
@@ -159,7 +158,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenGivenKeywordAndSizeSearch_shouldGetSearchResult() throws Exception {
+    void whenGivenKeywordAndSizeSearch_shouldGetSearchResult() throws Exception {
         String keyword = "keyword";
         Integer size = 10;
         Integer page = 1;
@@ -207,7 +206,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenGivenFieldsSearchAggregation_shouldGetSearchResult() throws Exception {
+    void whenGivenFieldsSearchAggregation_shouldGetSearchResult() throws Exception {
         VehicleField field = VehicleField.MAKE;
         List<VehicleFieldValuePair<String>> emptyPairs = Collections.emptyList();
         List<VehicleFieldValuePair<String>> fieldValuePairsPairs =
@@ -231,7 +230,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="USER_ROLE")
-    public void whenMissFieldsSearchAggregation_shouldGetError() throws Exception {
+    void whenMissFieldsSearchAggregation_shouldGetError() throws Exception {
         mockMvc.perform(post("/vehicles/search-aggregation")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -239,7 +238,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="GUEST_ROLE")
-    public void whenGivenFieldsSearchMatchers_shouldGetSearchResult() throws Exception {
+    void whenGivenFieldsSearchMatchers_shouldGetSearchResult() throws Exception {
         Integer size = 20, page = 1;
         List<VehicleFieldValuePair<String>> fieldValuePairsPairs =
                 List.of(new VehicleFieldValuePair<String>(VehicleField.MAKE, "value"));
@@ -267,7 +266,7 @@ public class VehicleMasterAPITests {
 
     @Test
     @WithMockUser(username="test", password="test", authorities="GUEST_ROLE")
-    public void whenMissParamFieldsSearchMatchers_shouldGetError() throws Exception {
+    void whenMissParamFieldsSearchMatchers_shouldGetError() throws Exception {
         Integer size = 20, page = 1;
         List<VehicleFieldValuePair<String>> fieldValuePairsPairs =
                 List.of(new VehicleFieldValuePair<String>(VehicleField.MAKE, "value"));
