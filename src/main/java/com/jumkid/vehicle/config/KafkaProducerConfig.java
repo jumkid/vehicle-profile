@@ -24,10 +24,10 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
-    @Value("${spring.kafka.topic.name.vehicle.create}")
+    @Value("${com.jumkid.events.topic.vehicle-create}")
     private String kafkaTopicVehicleCreate;
 
-    @Value("${spring.kafka.topic.name.vehicle.delete}")
+    @Value("${com.jumkid.events.topic.vehicle-delete}")
     private String kafkaTopicVehicleDelete;
 
     @Bean

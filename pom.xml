@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.2</version>
         <relativePath/>
     </parent>
     <groupId>com.jumkid.vehicle</groupId>
@@ -15,7 +15,7 @@
     <description>vehicle profile management spring boot application</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>20</java.version>
 
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.30</org.projectlombok.version>
@@ -156,6 +156,11 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
             <version>${junit.platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>spring-mock-mvc</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

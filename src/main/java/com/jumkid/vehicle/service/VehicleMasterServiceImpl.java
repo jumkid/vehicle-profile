@@ -43,10 +43,10 @@ import java.util.List;
 @Service
 public class VehicleMasterServiceImpl implements VehicleMasterService{
 
-    @Value("${spring.kafka.topic.name.vehicle.create}")
+    @Value("${com.jumkid.events.topic.vehicle-create}")
     private String kafkaTopicVehicleCreate;
 
-    @Value("${spring.kafka.topic.name.vehicle.delete}")
+    @Value("${com.jumkid.events.topic.vehicle-delete}")
     private String kafkaTopicVehicleDelete;
 
     @Value("${internal.api.content-vault}")

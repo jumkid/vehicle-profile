@@ -8,6 +8,7 @@ import com.jumkid.vehicle.exception.VehicleGalleryNoEmptyException;
 import com.jumkid.vehicle.exception.VehicleImportException;
 import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -88,6 +89,14 @@ public class ExceptionHandlingAdvice {
     public CustomErrorResponse handleMultipartException(MultipartException ex) {
         return CustomErrorResponse.builder()
                 .message("Upload failed due to: " + ex.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public CustomErrorResponse handleMessageNotReadableException(HttpMessageNotReadableException ex) {
+        return CustomErrorResponse.builder()
+                .message(ex.getMessage())
                 .build();
     }
 

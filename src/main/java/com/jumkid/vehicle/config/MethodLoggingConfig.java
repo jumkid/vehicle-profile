@@ -22,20 +22,18 @@ public class MethodLoggingConfig extends AbstractMethodLoggingConfig {
 
     @Pointcut("execution(* com.jumkid.vehicle.service.VehicleMasterServiceImpl.*(..))")
     @Override
-    public void monitor() {
-        //void
-    }
+    public void monitorPointCut() { /* empty method */}
 
     @Before("execution(* com.jumkid.vehicle.controller.*Controller.*(..))")
     @Override
-    public void log4AllControllers(JoinPoint joinPoint) {
+    public void controllerJoinPoint(JoinPoint joinPoint) {
         super.log(joinPoint);
     }
 
     @Bean
     public Advisor performanceMonitorAdvisor() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("com.jumkid.vehicle.config.MethodLoggingConfig.monitor()");
+        pointcut.setExpression("com.jumkid.vehicle.config.MethodLoggingConfig.monitorPointCut()");
         return new DefaultPointcutAdvisor(pointcut, new CustomPerformanceMonitorInterceptor(false));
     }
 
