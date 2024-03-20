@@ -19,6 +19,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,9 +27,9 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@PropertySource("classpath:application.share.properties")
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:10092", "port=10092" })
 @EnableTestContainers
+@TestPropertySource("/application.share.properties")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VehicleAdminAPITests {
 
@@ -37,7 +38,6 @@ class VehicleAdminAPITests {
 
     @Value("${com.jumkid.jwt.test.user-token}")
     private String testUserToken;
-
     @Value("${com.jumkid.jwt.test.admin-token}")
     private String testAdminToken;
 
