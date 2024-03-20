@@ -1,4 +1,4 @@
-CREATE TABLE vehicle_engine (
+CREATE TABLE IF NOT EXISTS vehicle_engine (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
     type VARCHAR(100),
@@ -12,7 +12,7 @@ CREATE TABLE vehicle_engine (
     manufacturer_engine_code VARCHAR(100)
 );
 
-CREATE TABLE vehicle_transmission (
+CREATE TABLE IF NOT EXISTS vehicle_transmission (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
     availability VARCHAR(100),
@@ -22,7 +22,12 @@ CREATE TABLE vehicle_transmission (
     number_of_speeds SMALLINT
 );
 
-CREATE TABLE vehicle_master (
+CREATE TABLE IF NOT EXISTS vehicle_pricing (
+     id INTEGER AUTO_INCREMENT PRIMARY KEY,
+     msrp FLOAT
+);
+
+CREATE TABLE IF NOT EXISTS vehicle_master (
     vehicle_id VARCHAR(100) PRIMARY KEY,
     name VARCHAR(255),
     make VARCHAR(100) NOT NULL,
@@ -44,8 +49,3 @@ CREATE TABLE vehicle_master (
     FOREIGN KEY (vehicle_transmission_id) REFERENCES vehicle_transmission(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_pricing_id) REFERENCES vehicle_pricing(id) ON DELETE CASCADE
 );
-
-CREATE TABLE vehicle_pricing (
-     id INTEGER AUTO_INCREMENT PRIMARY KEY,
-     msrp FLOAT
-)

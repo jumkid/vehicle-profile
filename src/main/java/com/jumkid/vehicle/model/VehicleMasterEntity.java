@@ -14,16 +14,14 @@ import com.jumkid.vehicle.enums.VehicleField;
 
 @Entity
 @Table(name = "vehicle_master")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class VehicleMasterEntity {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = VehicleField.Fields.VEHICLE_ID, updatable = false, nullable = false)
     private String id;
 

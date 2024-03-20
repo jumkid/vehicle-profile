@@ -11,15 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component("apiTestSetup")
-public class APITestSetup {
+public class TestObjectsBuilder {
 
     static String DUMMY_ID = "xxxx-xxxx";
 
-    public Vehicle buildVehicle() {
+    public static Vehicle buildVehicle() {
         return buildVehicle(DUMMY_ID);
     }
 
-    public Vehicle buildVehicle(String id) {
+    public static Vehicle buildVehicle(String id) {
         return Vehicle.builder()
                 .id(id)
                 .name("test vehicle")
@@ -49,13 +49,4 @@ public class APITestSetup {
                 )
                 .build();
     }
-
-    public List<Vehicle> buildVehicles() {
-        List<Vehicle> list = new ArrayList<>();
-        for (int i=0; i<10; i++) {
-            list.add(buildVehicle(DUMMY_ID + "-" + i));
-        }
-        return list;
-    }
-
 }

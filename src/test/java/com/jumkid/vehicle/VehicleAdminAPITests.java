@@ -2,7 +2,6 @@ package com.jumkid.vehicle;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.parsing.Parser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +19,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,14 +28,12 @@ import static org.mockito.Mockito.when;
 @AutoConfigureMockMvc
 @PropertySource("classpath:application.share.properties")
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:10092", "port=10092" })
+@EnableTestContainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VehicleAdminAPITests {
 
     @LocalServerPort
     private int port;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
 
     @Value("${com.jumkid.jwt.test.user-token}")
     private String testUserToken;
@@ -46,8 +41,6 @@ class VehicleAdminAPITests {
     @Value("${com.jumkid.jwt.test.admin-token}")
     private String testAdminToken;
 
-    @Autowired
-    private APITestSetup apiTestSetup;
     @MockBean
     private JobLauncher jobLauncher;
 
@@ -55,7 +48,6 @@ class VehicleAdminAPITests {
     void setUp() {
         try {
             RestAssured.defaultParser = Parser.JSON;
-            RestAssuredMockMvc.webAppContextSetup(webApplicationContext);
         } catch (Exception e) {
             fail(e.getMessage());
         }

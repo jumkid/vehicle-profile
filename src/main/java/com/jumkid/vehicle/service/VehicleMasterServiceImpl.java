@@ -177,7 +177,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     public Vehicle get(String vehicleId) throws VehicleNotFoundException {
         VehicleMasterEntity entity = vehicleMasterRepository.findById(vehicleId)
                 .orElseThrow(() -> { throw new VehicleNotFoundException(vehicleId); });
-        log.debug("Found vehicle with id {} records for user", vehicleId);
+        log.debug("Found vehicle entity by id {}", vehicleId);
 
         return vehicleMapper.entityToDto(entity);
     }
