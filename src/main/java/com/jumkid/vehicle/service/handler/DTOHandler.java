@@ -32,12 +32,12 @@ public class DTOHandler {
 
         if (oldEntity != null) {
             dto.setCreatedBy(oldEntity.getCreatedBy());
-            dto.setCreationDate(oldEntity.getCreationDate());
+            dto.setCreationDate(oldEntity.getCreatedOn());
 
             if (dto.getModificationDate() == null) { throw new ModificationDatetimeNotFoundException(); }
 
-            if (oldEntity.getModificationDate() != null
-                    && !oldEntity.getModificationDate().truncatedTo(ChronoUnit.MILLIS)
+            if (oldEntity.getModifiedOn() != null
+                    && !oldEntity.getModifiedOn().truncatedTo(ChronoUnit.MILLIS)
                     .equals(dto.getModificationDate().truncatedTo(ChronoUnit.MILLIS))) {
                 throw new ModificationDatetimeOutdatedException();
             }

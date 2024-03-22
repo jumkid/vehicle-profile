@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface VehicleMasterRepository extends JpaRepository<VehicleMasterEntity, String> {
 
-    List<VehicleMasterEntity> findByCreatedByOrderByCreationDate(String userId);
+    List<VehicleMasterEntity> findByCreatedByOrderByCreatedOn(String userId);
 
 }

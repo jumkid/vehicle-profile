@@ -37,14 +37,14 @@ public enum VehicleField {
     @FieldNameConstants.Include VEHICLETRANSMISSSION_NAME("vehicleTransmission.name"),
     @FieldNameConstants.Include VEHICLETRANSMISSSION_DRIVETRAIN("vehicleTransmission.drivetrain"),
 
-    @FieldNameConstants.Include CREATION_DATE("creation_date"),
-    @FieldNameConstants.Include CREATIONDATE("creationDate"),
+    @FieldNameConstants.Include CREATED_ON("created_on"),
+    @FieldNameConstants.Include CREATEDON("createdOn"),
 
     @FieldNameConstants.Include CREATED_BY("created_by"),
     @FieldNameConstants.Include CREATEDBY("createdBy"),
 
-    @FieldNameConstants.Include MODIFICATION_DATE("modification_date"),
-    @FieldNameConstants.Include MODIFICATIONDATE("modificationDate"),
+    @FieldNameConstants.Include MODIFIED_ON("modified_on"),
+    @FieldNameConstants.Include MODIFIEDON("modifiedOn"),
     @FieldNameConstants.Include MODIFIED_BY("modified_by"),
     @FieldNameConstants.Include MODIFIEDBY("modifiedBy");
 

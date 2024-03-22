@@ -1,24 +1,21 @@
 package com.jumkid.vehicle.model;
 
+import com.jumkid.share.model.GenericEntity;
 import com.jumkid.share.security.AccessScope;
 import com.jumkid.vehicle.enums.VehicleEngineField;
 import com.jumkid.vehicle.enums.VehiclePricingField;
 import com.jumkid.vehicle.enums.VehicleTransmissionField;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 import com.jumkid.vehicle.enums.VehicleField;
 
-@Entity
 @Table(name = "vehicle_master")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class VehicleMasterEntity {
+@Entity
+@SuperBuilder @Data @NoArgsConstructor @AllArgsConstructor @EqualsAndHashCode(of = {"id"}, callSuper = true)
+public class VehicleMasterEntity extends GenericEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,18 +46,6 @@ public class VehicleMasterEntity {
 
     @Column(name = VehicleField.Fields.CATEGORY)
     private String category;
-
-    @Column(name = VehicleField.Fields.CREATION_DATE)
-    private LocalDateTime creationDate;
-
-    @Column(name = VehicleField.Fields.CREATED_BY)
-    private String createdBy;
-
-    @Column(name = VehicleField.Fields.MODIFICATION_DATE)
-    private LocalDateTime modificationDate;
-
-    @Column(name = VehicleField.Fields.MODIFIED_BY)
-    private String modifiedBy;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = VehicleField.Fields.VEHICLE_ENGINE_ID,

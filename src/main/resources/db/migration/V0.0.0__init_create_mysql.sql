@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS vehicle_master (
     category VARCHAR(64),
 
     created_by VARCHAR(255),
-    creation_date DATETIME(3),
+    created_on DATETIME(3),
     modified_by VARCHAR(255),
-    modification_date DATETIME(3),
+    modified_on DATETIME(3),
     FOREIGN KEY (vehicle_engine_id) REFERENCES vehicle_engine(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_transmission_id) REFERENCES vehicle_transmission(id) ON DELETE CASCADE,
     FOREIGN KEY (vehicle_pricing_id) REFERENCES vehicle_pricing(id) ON DELETE CASCADE

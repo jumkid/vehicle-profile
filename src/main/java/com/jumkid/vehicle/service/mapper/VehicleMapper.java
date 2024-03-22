@@ -10,6 +10,8 @@ import java.util.List;
 public interface VehicleMapper {
 
     @Mapping(target="id", source = "entity.id")
+    @Mapping(target = "creationDate", source = "entity.createdOn")
+    @Mapping(target = "modificationDate", source = "entity.modifiedOn")
     @Mapping(target="vehicleEngine", source="entity.vehicleEngineEntity")
     @Mapping(target="vehicleTransmission", source="entity.vehicleTransmissionEntity")
     @Mapping(target="vehiclePricing", source="entity.vehiclePricingEntity")

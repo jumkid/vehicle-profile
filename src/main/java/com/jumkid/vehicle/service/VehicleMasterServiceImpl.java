@@ -98,7 +98,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
     public List<Vehicle> getUserVehicles() {
         String userId = getCurrentUserId();
 
-        List<VehicleMasterEntity> vehicleMasterEntities = vehicleMasterRepository.findByCreatedByOrderByCreationDate(userId);
+        List<VehicleMasterEntity> vehicleMasterEntities = vehicleMasterRepository.findByCreatedByOrderByCreatedOn(userId);
         log.debug("Found {} vehicles for user {}", vehicleMasterEntities.size(), userId);
 
         return vehicleMapper.entitiesToDTOs(vehicleMasterEntities);
@@ -275,7 +275,7 @@ public class VehicleMasterServiceImpl implements VehicleMasterService{
                 update(vehicleId,
                         Vehicle.builder()
                                 .mediaGalleryId(newGalleryId)
-                                .modificationDate(updateEntity.getModificationDate())
+                                .modificationDate(updateEntity.getModifiedOn())
                                 .build());
             }
         }
