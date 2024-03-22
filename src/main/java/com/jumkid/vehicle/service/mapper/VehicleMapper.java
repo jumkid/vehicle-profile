@@ -18,6 +18,8 @@ public interface VehicleMapper {
     Vehicle entityToDto(VehicleMasterEntity entity);
 
     @Mapping(target="id", source = "dto.id")
+    @Mapping(target = "createdOn", source = "dto.creationDate")
+    @Mapping(target = "modifiedOn", source = "dto.modificationDate")
     @Mapping(target="vehicleEngineEntity", source="dto.vehicleEngine")
     @Mapping(target="vehicleTransmissionEntity", source="dto.vehicleTransmission")
     @Mapping(target="vehiclePricingEntity", source="dto.vehiclePricing")
