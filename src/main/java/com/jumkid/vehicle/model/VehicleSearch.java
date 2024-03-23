@@ -49,6 +49,6 @@ public class VehicleSearch implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = YYYYMMDDTHHMMSS3S)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime creationDate;
+    private LocalDateTime createdOn;
 
 }

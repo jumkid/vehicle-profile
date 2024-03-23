@@ -1,14 +1,12 @@
-package com.jumkid.vehicle.controller;
+package com.jumkid.vehicle.exception;
 
 import com.jumkid.share.controller.response.CustomErrorResponse;
 import com.jumkid.share.exception.ModificationDatetimeNotFoundException;
 import com.jumkid.share.exception.ModificationDatetimeOutdatedException;
 import com.jumkid.share.security.exception.UserProfileNotFoundException;
-import com.jumkid.vehicle.exception.VehicleGalleryNoEmptyException;
-import com.jumkid.vehicle.exception.VehicleImportException;
-import com.jumkid.vehicle.exception.VehicleNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -30,9 +28,9 @@ import static org.springframework.http.HttpStatus.*;
 @RestControllerAdvice
 public class ExceptionHandlingAdvice {
 
-    @ExceptionHandler({UserProfileNotFoundException.class})
+    @ExceptionHandler({UserProfileNotFoundException.class, AccessDeniedException.class})
     @ResponseStatus(FORBIDDEN)
-    public CustomErrorResponse handle(UserProfileNotFoundException ex) {
+    public CustomErrorResponse handleUserProfileNotFound(RuntimeException ex) {
         log.info("User profile could not be found.", ex);
         return new CustomErrorResponse(Calendar.getInstance().getTime(), ex.getMessage());
     }
@@ -128,6 +126,15 @@ public class ExceptionHandlingAdvice {
         return CustomErrorResponse.builder()
                 .timestamp(Calendar.getInstance().getTime())
                 .message(ex.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public CustomErrorResponse handle(Exception e) {
+        return CustomErrorResponse.builder()
+                .timestamp(Calendar.getInstance().getTime())
+                .message("Oops! Backend system failed to process the request. Please contact system admin")
                 .build();
     }
 }

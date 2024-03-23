@@ -190,10 +190,9 @@ public class VehicleSearchRepositoryImpl implements VehicleSearchRepository {
     }
 
     private SortOptions getSortOption() {
-        //sort by model year
         return SortOptions
                 .of(soBuilder -> soBuilder.field(FieldSort
-                        .of(fs->fs.field(VehicleField.CREATED_ON.value()).order(SortOrder.Desc))));
+                        .of(fs->fs.field(VehicleField.CREATEDON.value()).order(SortOrder.Desc))));
     }
 
     private Integer getFrom(Integer size, Integer page){
